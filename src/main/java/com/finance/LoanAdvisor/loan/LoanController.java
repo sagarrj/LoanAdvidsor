@@ -2,6 +2,7 @@ package com.finance.LoanAdvisor.loan;
 
 
 import com.finance.LoanAdvisor.entities.Sanction;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
