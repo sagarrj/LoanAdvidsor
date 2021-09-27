@@ -1,0 +1,19 @@
+INSERT INTO `customers` (`CUSTOMER_ID`, `FIRST_NAME`, `LAST_NAME`, `CITY`, `GENDER`, `EMAIL`, `AGE`, `PHONE_NO`, `INCOME`, `ADHAR_NO`, `PAN_NO`, `CREDIT_SCORE`, `INITIAL_AMOUNT`, `LOAN_REQUIRE`, `STATUS`, `CREATE_DTTM`, `CREATED_BY`, `UPDATE_DTTM`, `UPDATED_BY`) VALUES
+	(1, 'Pratik', 'Kelekar', 'Pune', 'Male', 'pratik@gmail.com', 30, '9122459870', 50000, '721088234512', 'ABDKE7756K', 600, 90000, 800000, '', '0000-00-00 00:00:00', NULL, NULL, NULL),
+	(2, 'Priya', 'Varma', 'Mumbai', 'female', 'piyavarma@gmail.com', 26, '9326745909', 60000, '568188234501', 'DECKE7157E', 595, 50000, 200000, '', '0000-00-00 00:00:00', NULL, NULL, NULL);
+
+
+INSERT INTO `loan` (`LOAN_ID`, `LOAN_TYPE`, `LOAN_DESC`, `ROI`, `STATUS`, `CREATE_DTTM`, `CREATED_BY`, `UPDATE_DTTM`, `UPDATED_BY`) VALUES
+	(1, 2, 'HOME lOAN', 7.000000, 'A', '2021-09-27 15:21:46', NULL, NULL, NULL),
+	(2, 5, 'Quality education is a must for a complete and successful life. For many, it is equivalent to graduating from a top institution. The cost of education is, however, increasing rapidly. In fact, the cost of studying at reputed institutions is already quite high', 8.500000, 'A', '2021-09-27 16:20:25', NULL, NULL, NULL),
+	(3, 1, 'A personal loan is an amount of money you can borrow to use for a variety of purposes. For instance, you may use a personal loan to consolidate debt, pay for home renovations, or plan a dream wedding. Personal loans can be offered by banks, credit unions, or online lenders. The money you borrow must be repaid over time, typically with interest. Some lenders may also charge fees for personal loans. ', 7.000000, 'A', '2021-09-27 16:21:12', NULL, NULL, NULL),
+	(4, 4, 'A gold loan can be used to raise cash to meet emergency or planned financial requirements, such as business expansion, education, medical emergencies, agricultural expenses, etc. The loan against gold is a secured loan where gold is placed as security or collateral in return for a loan amount that corresponds to the per gram market value of gold on the day that the gold has been pledged. Any other metals, gems, or stones that are in the jewelry will not be calculated when determining the value of the gold loan. ', 5.000000, 'A', '2021-09-27 16:22:08', NULL, NULL, NULL),
+	(5, 3, 'Buying a car can definitely instil a great sense of joy and happiness in you. A car will remain as your asset and it is going to be one of the biggest investments that you make. A car loan helps you to pave the path between your dream of owning a car and actually buying your car. Since credit reports are crucial for judging your eligibility towards any loan, it is good to have a high credit score when you apply for a car loan. ', 6.000000, 'A', '2021-09-27 16:22:54', NULL, NULL, NULL);
+
+
+INSERT INTO `loan_type` (`LOAN_TYPE_ID`, `LOAN_DESCRIPTION`, `STATUS`, `CREATE_DTTM`, `CREATED_BY`, `UPDATE_DTTM`, `UPDATED_BY`) VALUES
+	(1, 'PERSONAL ', 'A', '2021-09-27 11:45:27', NULL, NULL, NULL),
+	(2, 'HOME ', 'A', '2021-09-27 11:45:27', NULL, NULL, NULL),
+	(3, 'CAR ', 'A', '2021-09-27 16:16:46', NULL, NULL, NULL),
+	(4, 'GOLD ', 'A', '2021-09-27 16:17:04', NULL, NULL, NULL),
+	(5, 'EDUCATIONAL', 'A', '2021-09-27 16:17:23', NULL, NULL, NULL);

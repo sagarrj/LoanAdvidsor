@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,7 +22,6 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer loanId;
 
-
     private char status = 'A';
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDttm;
@@ -29,4 +30,7 @@ public class Loan {
     private Date updateDttm;
     private Integer updatedBy;
 
+
+    /*@OneToMany(mappedBy = "loan")
+    private Set<Sanction> sanctionSet = new HashSet<>();*/
 }
