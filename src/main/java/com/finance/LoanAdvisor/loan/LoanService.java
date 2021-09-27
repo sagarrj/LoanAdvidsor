@@ -1,8 +1,7 @@
 package com.finance.LoanAdvisor.loan;
 
 import com.finance.LoanAdvisor.entities.Sanction;
-import com.finance.LoanAdvisor.repository.LoanRepository;
-import com.finance.LoanAdvisor.repository.SanctionRepository;
+import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

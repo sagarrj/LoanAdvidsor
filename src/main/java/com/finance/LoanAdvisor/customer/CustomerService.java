@@ -3,20 +3,20 @@ package com.finance.LoanAdvisor.customer;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.Customer;
-import com.finance.LoanAdvisor.repository.CustomerRepository;
+import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
-	@Autowired
-	CustomerRepository customerRepository;
+	private final CustomerRepository customerRepository;
 	
 	Logger logger = LoggerFactory.getLogger(CustomerService.class);
 

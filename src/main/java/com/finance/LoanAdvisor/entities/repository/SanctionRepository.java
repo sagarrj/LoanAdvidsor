@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.repository;
+package com.finance.LoanAdvisor.entities.repository;
 
 import com.finance.LoanAdvisor.entities.Sanction;
 import org.springframework.data.jpa.repository.JpaRepository;
