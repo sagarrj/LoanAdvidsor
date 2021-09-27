@@ -21,7 +21,10 @@ public class CustomerService {
 	Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
 	
-	public Optional<Customer> addCustomer(Customer customer) {
+	public Optional<Customer> addCustomer(Customer customer) throws DataNotFoundException{
+		if(!(customer.getEmail().isEmpty())) {
+			throw new DataNotFoundException("Customer is already created");
+		}
 		Customer customerInfo = customerRepository.save(customer);
 		logger.info("Customer added");
 		return Optional.of(customerInfo);
