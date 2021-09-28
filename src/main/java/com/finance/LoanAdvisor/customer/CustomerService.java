@@ -12,6 +12,7 @@ import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
