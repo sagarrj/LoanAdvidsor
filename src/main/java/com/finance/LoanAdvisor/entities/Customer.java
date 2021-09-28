@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author priypawa This entity class includes declaration of parameters of 
@@ -47,7 +45,11 @@ public class Customer {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDttm;
     private Integer updatedBy;
-/*
+
+
+ /*   @Getter(value = AccessLevel.NONE)
+    @Setter(value = AccessLevel.NONE)
+    @ToString.Exclude
     @OneToMany(mappedBy = "customer")
     private Set<Sanction> sanctionSet = new HashSet<>();*/
 

@@ -25,7 +25,6 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     
     private Integer loanId;
-  //  private Integer loanType;
     private String loanDesc;
     private Double ROI;
     private char status = 'A';
@@ -43,7 +42,6 @@ public class Loan {
     
     
 
-
-    /*@OneToMany(mappedBy = "loan")
+   /* @OneToMany(mappedBy = "loan")
     private Set<Sanction> sanctionSet = new HashSet<>();*/
 }

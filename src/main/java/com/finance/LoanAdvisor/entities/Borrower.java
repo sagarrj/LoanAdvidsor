@@ -14,20 +14,22 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Sanction {
+public class Borrower {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer sanctionId;
+    private Integer borrowerId;
 
     @ManyToOne
     @JoinColumn(name = "CUSTOMER_ID")
     private Customer customer;
+
     @ManyToOne
-    @JoinColumn(name = "LOAN_ID")
-    private Loan loan;
-    private Double loanAmount;
-    private Double ROI;
+    @JoinColumn(name = "SANCTION_ID")
+    private Sanction sanction;
+    private Integer tenure;
+    private Double emi;
     private char status = 'A';
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDttm;
@@ -35,5 +37,4 @@ public class Sanction {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDttm;
     private Integer updatedBy;
-
 }

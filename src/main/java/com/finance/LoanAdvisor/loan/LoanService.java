@@ -1,54 +1,101 @@
 package com.finance.LoanAdvisor.loan;
 
+import com.finance.LoanAdvisor.config.DataNotFoundException;
+import com.finance.LoanAdvisor.config.LoanConstants;
+import com.finance.LoanAdvisor.entities.Borrower;
+import com.finance.LoanAdvisor.entities.Customer;
+import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.Sanction;
+import com.finance.LoanAdvisor.entities.repository.BorrowerRepository;
+import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
-
+import com.finance.LoanAdvisor.loan.VO.LoanVO;
+import com.finance.LoanAdvisor.loan.VO.RegisterRequest;
+import com.finance.LoanAdvisor.loan.VO.RegisterResponse;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.entities.LoanType;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class LoanService {
-	
-	
-	  private final LoanRepository loanRepository;
 
-    private final SanctionRepository sanctionRepository;
     Logger logger = LoggerFactory.getLogger(LoanController.class);
 
-    public Sanction registerCustomerForLoan(Integer customerId, Integer sanctionId) {
+    private final LoanRepository loanRepository;
+	private final SanctionRepository sanctionRepository;
+    private final CustomerRepository customerRepository;
+    private final BorrowerRepository borrowerRepository;
 
-        Optional<Sanction> optionalSanction = sanctionRepository.findById(sanctionId);
-        return optionalSanction.isPresent() ? optionalSanction.get() : null;
+    public RegisterResponse registerCustomerForLoan(RegisterRequest registerRequest) {
+
+//        List<Borrower> borrowers = borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(customerId, sanctionId);
+//        Borrower borrower = borrowers.get(0);
+//        return  borrower.getSanction();
+
+        Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
+        Optional<Sanction> optionalSanction = sanctionRepository.findById(registerRequest.getSanctionId());
+        if(optionalCustomer.isPresent() && optionalSanction.isPresent()){
+            Customer customer = optionalCustomer.get();
+            Sanction sanction = optionalSanction.get();
+
+            Integer maxTenure = LoanConstants.MAX_AGE - customer.getAge();
+
+            Integer tenure = registerRequest.getPreferredTenure() < maxTenure ?
+                    registerRequest.getPreferredTenure() : maxTenure;
+
+            Double emi = getEMI(sanction.getROI(),tenure,sanction.getLoanAmount());
+
+            Borrower borrower = new Borrower();
+            borrower.setCustomer(customer);
+            borrower.setSanction(sanction);
+            borrower.setTenure(tenure);
+            borrower.setEmi(emi);
+            borrower.setStatus('A');
+            borrower.setCreateDttm(new Date());
+
+
+            Borrower save = borrowerRepository.save(borrower);
+
+            RegisterResponse registerResponse = new RegisterResponse();
+            registerResponse.setEmi(emi);
+            registerResponse.setTenure(tenure);
+            return registerResponse;
+
+        }else{
+            throw new DataNotFoundException("customer or sanction not found");
+        }
 
     }
 
 	public Optional<Loan> getLoan(int id) throws DataNotFoundException{
-		
+
 		Optional<Loan> loan=loanRepository.findById(id);
 		return loan;
 	}
-	
-	public List<Loan> getAllLoan() throws DataNotFoundException{
+
+	public List<LoanVO> getAllLoan() throws DataNotFoundException{
 		logger.info("List of All Users Retreived Sucessfully "+loanRepository.findAll());
-		return loanRepository.findAll();
+        List<Loan> loans = loanRepository.findAll();
+        List<LoanVO> loanVOS = convertToLoanVO(loans);
+        return loanVOS;
 	}
-	
+
+    private List<LoanVO> convertToLoanVO(List<Loan> loans) {
+
+        List<LoanVO> loanVOS = new ArrayList<>();
+
+
+        return null;
+    }
+
 //	public Optional<Loan> addLoan(Loan loan) throws DataNotFoundException{
 //		if((loan.getStatus()!='A')) {
 //			throw new DataNotFoundException("Loan is already created");
@@ -57,8 +104,19 @@ public class LoanService {
 //		logger.info("Loan Created");
 //		return Optional.of(loanInfo);
 //	}
-//	
-	
+//
+
+    public Double getEMI(Double rate, Integer tenure, Double principal){
+        Double emi;
+
+        rate = rate / (12 * 100); // one month interest
+        tenure = tenure * 12; // one month period
+        emi = (principal * rate * (float)Math.pow(1 + rate, tenure))
+                / (float)(Math.pow(1 + rate, tenure) - 1);
+
+        return emi;
+    }
+
 
 
 }
