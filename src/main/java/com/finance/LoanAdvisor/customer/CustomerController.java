@@ -69,6 +69,10 @@ public class CustomerController {
 		CustomerVO customerInfo = customerService.addCustomer(customer);
 		return new ResponseEntity<CustomerVO>(customerInfo,HttpStatus.CREATED);
 	}
+	@GetMapping("/check/{customerId}/{loanId}/{loanTypeId}")
+	public boolean LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId, @PathVariable("loanTypeId") Integer loanTypeId ) {
+		return customerService.customerLoanEliglibity(customerId, loanId, loanTypeId);
+	}
 
 
 }
