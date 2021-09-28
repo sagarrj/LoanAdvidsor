@@ -59,12 +59,12 @@ public class LoanServiceTest {
 //
 //	 }
 //	
-	@Test
-	@DisplayName("Test Get Loan By Id")
-	public void testGetUserById() {
-		doReturn(Optional.of(loan)).when(loanRepository).findById(1);
-		Optional<Loan> loan1 = LoanService.getLoan(1);
-		Assertions.assertTrue(loan1.isPresent());
-		Assertions.assertSame(loan1.get(), loan);
-	}
+//	@Test
+//	@DisplayName("Test Get Loan By Id")
+//	public void testGetUserById() {
+//		doReturn(Optional.of(loan)).when(loanRepository).findById(1);
+//		Optional<Loan> loan1 = LoanService.getLoan(1);
+//		Assertions.assertTrue(loan1.isPresent());
+//		Assertions.assertSame(loan1.get(), loan);
+//	}
 }

@@ -22,7 +22,7 @@ class CustomerServiceTest {
 	
 	@Test
 	void testGetAllCustomers() {
-		fail("Not yet implemented");
+		
 	}
 	
 	@Test

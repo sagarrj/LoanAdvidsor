@@ -41,15 +41,18 @@ public class Loan {
     private Date updateDttm;
     private Integer updatedBy;
     
+
+   
+
     
     
    /* @OneToMany(mappedBy = "loan")
-=======
+
 	
     
   
 
     /*@OneToMany(mappedBy = "loan")
->>>>>>> Stashed changes
+
     private Set<Sanction> sanctionSet = new HashSet<>();*/
 }
