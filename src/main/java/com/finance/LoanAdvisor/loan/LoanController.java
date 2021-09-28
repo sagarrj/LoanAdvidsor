@@ -48,14 +48,8 @@ public class LoanController {
 
 	}
 
-//	@PostMapping("/add")
-//	public ResponseEntity<Loan> addLoan(@RequestBody Loan loan) throws DataNotFoundException{
-//		logger.info("LoanType returned from controller");
-//		Optional<Loan> loanInfo =loanService.addLoan(loan);
-//		return new ResponseEntity<Loan>(loanInfo.get(),HttpStatus.CREATED);
-//
-//	}
-//
+
+
 
 
 
