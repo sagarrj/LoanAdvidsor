@@ -37,7 +37,6 @@ public class LoanControllerTest {
 	
 	@MockBean
 	LoanService loanservice;
-	private LoanVO loan;
 	@Autowired
 	private MockMvc mockMvc;
 	private LoanVO loanVO;
@@ -79,6 +78,7 @@ public class LoanControllerTest {
 		String url = "/loan/getAllLoan";
 		mockMvc.perform(get(url)).andExpect(status().isOk());
 	}
+	
 	
 	
 	@DisplayName("GET/geLoanById")
