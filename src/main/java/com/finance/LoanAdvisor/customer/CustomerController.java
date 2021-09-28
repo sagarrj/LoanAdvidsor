@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Customer;
 
 
@@ -38,7 +39,7 @@ public class CustomerController {
 	 * @return {@link List} of {@link Customer}
 	 */
 	@GetMapping("/list")
-	public List<Customer> getAllCustomers() {
+	public List<CustomerVO> getAllCustomers() {
 		logger.info("List of customers from controller");
 		return customerService.getAllCustomers();
 	}
@@ -50,10 +51,10 @@ public class CustomerController {
 	 */
 	@GetMapping("/view/{id}")
 	
-	public ResponseEntity<Customer> getCustomer(@PathVariable("id") Integer customerId) {
+	public ResponseEntity<CustomerVO> getCustomer(@PathVariable("id") Integer customerId) {
 		logger.info("Customer returned from controller");
-		Optional<Customer> customerInfo =  customerService.getCustomer(customerId);
-		return new ResponseEntity<Customer>(customerInfo.get(),HttpStatus.OK);
+		CustomerVO customerInfo =  customerService.getCustomer(customerId);
+		return new ResponseEntity<CustomerVO>(customerInfo,HttpStatus.OK);
 	}
 	/**
 	 * This method accepts and saves customer details and return an object of
@@ -63,10 +64,10 @@ public class CustomerController {
 	 * @return {@link ResponseEntity} of {@link Customer} 
 	 */
 	@PostMapping("/add")
-	public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer){
+	public ResponseEntity<CustomerVO> addCustomer(@RequestBody Customer customer){
 		logger.info("Customer returned from controller");
-		Optional<Customer> customerInfo = customerService.addCustomer(customer);
-		return new ResponseEntity<Customer>(customerInfo.get(),HttpStatus.CREATED);
+		CustomerVO customerInfo = customerService.addCustomer(customer);
+		return new ResponseEntity<CustomerVO>(customerInfo,HttpStatus.CREATED);
 	}
 	@GetMapping("/check/{customerId}/{loanId}/{loanTypeId}")
 	public boolean LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId, @PathVariable("loanTypeId") Integer loanTypeId ) {

@@ -1,5 +1,6 @@
 package com.finance.LoanAdvisor.customer;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.finance.LoanAdvisor.config.DataNotFoundException;
+import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.LoanType;
@@ -30,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequiredArgsConstructor
 public class CustomerService {
 
+	private static final int DEFAULT_ID = 0;
+
 	private static final char STATUS = 'A';
 
 	private final CustomerRepository customerRepository;
@@ -46,18 +50,20 @@ public class CustomerService {
 	 * @return {@link Optional} of {@link Customer}
 	 * @throws DataNotFoundException
 	 */
-	public Optional<Customer> addCustomer(Customer customer) throws DataNotFoundException{		
+	public CustomerVO addCustomer(Customer customer) throws DataNotFoundException{		
 		if(customerRepository.findByEmail(customer.getEmail()).isPresent()) {
 			logger.warn("Customer is already created");
 			throw new DataNotFoundException("Customer is already created");
 		}
 		customer.setStatus(STATUS);
 		customer.setCreateDttm(new Date());
-		customer.setCreatedBy(0);
-		Customer customerInfo = customerRepository.save(customer);
-		logger.info("Customer added");
-		return Optional.of(customerInfo);
+		customer.setCreatedBy(DEFAULT_ID);
+	    customerRepository.save(customer);
+		CustomerVO customerVO = convertToCustomerVO(customer);
+	    logger.info("Customer added");
+		return customerVO;
 	}
+
 
 	/**
 	 * This method accepts customer Id and returns customer details based on Id.
@@ -65,14 +71,15 @@ public class CustomerService {
 	 * @return {@link Optional} of {@link Customer}
 	 * @throws DataNotFoundException
 	 */
-	public Optional<Customer> getCustomer(Integer customerId) throws DataNotFoundException {
-		Optional<Customer> customer = customerRepository.findById(customerId);
-		if(customer.isPresent()) {
+	public CustomerVO getCustomer(Integer customerId) throws DataNotFoundException {
+		Customer customer = customerRepository.findById(customerId).orElse(null);
+		if(customer==null) {
 			logger.warn("Customer not found");
 			throw new DataNotFoundException("Customer not found");
 		}
+		CustomerVO customerVO = convertToCustomerVO(customer);
 		logger.info("Customer returned from service");
-		return customer;
+		return customerVO;
 	}
 
 	/**
@@ -80,14 +87,38 @@ public class CustomerService {
 	 * @return {@link List} of {@link Customer}
 	 * @throws DataNotFoundException
 	 */
-	public List<Customer> getAllCustomers() throws DataNotFoundException {
-		List<Customer> customers = customerRepository.findAll();
+	public List<CustomerVO> getAllCustomers() throws DataNotFoundException {
+		List<Customer> customers = customerRepository.findAllByStatus('A');
 		if(customers.isEmpty()) {
 			logger.warn("List is empty");
 			throw new DataNotFoundException("List is empty");
 		}
+		List<CustomerVO> customerVOList = convertToCustomerVOList(customers);
 		logger.info("List of customers from service");
-		return customers;
+		return customerVOList;
+	}
+	
+
+	private List<CustomerVO> convertToCustomerVOList(List<Customer> customers) {
+        List<CustomerVO> customerVOList = new ArrayList<>();
+        for(Customer customer:customers) {
+      	   customerVOList.add(convertToCustomerVO(customer));
+        	
+        }
+		return customerVOList;
+	}
+
+
+	private CustomerVO convertToCustomerVO(Customer customer) {
+		CustomerVO customerVO = new CustomerVO();
+		customerVO.setCustomerId(customer.getCustomerId());
+		customerVO.setFirstName(customer.getFirstName());
+		customerVO.setLastName(customer.getLastName());
+		customerVO.setEmail(customer.getEmail());
+		customerVO.setAge(customer.getAge());
+		customerVO.setCreditScore(customer.getCreditScore());
+		customerVO.setIncome(customer.getIncome());
+		return customerVO;
 	}
 
 

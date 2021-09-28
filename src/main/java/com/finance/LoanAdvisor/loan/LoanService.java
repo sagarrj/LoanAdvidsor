@@ -17,10 +17,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import com.finance.LoanAdvisor.entities.LoanType;
+
 import java.util.Optional;
 
 @Service
@@ -74,37 +76,64 @@ public class LoanService {
         }
 
     }
+// Get Loan By Id
+	public LoanVO getLoan(int id) throws DataNotFoundException{
 
-	public Optional<Loan> getLoan(int id) throws DataNotFoundException{
+		Loan loan=loanRepository.findById(id).orElse(null);
+		if(loan==null) {
+			logger.warn("Loan not found");
+			throw new DataNotFoundException("Loan not found");
+		}
+		logger.info("Loan returned from service");
+		LoanVO loanVOS = convertToLoanVO(loan);
+		return loanVOS;
+		
 
-		Optional<Loan> loan=loanRepository.findById(id);
-		return loan;
 	}
 
+//Get All List Of Loan
 	public List<LoanVO> getAllLoan() throws DataNotFoundException{
-		logger.info("List of All Users Retreived Sucessfully "+loanRepository.findAll());
-        List<Loan> loans = loanRepository.findAll();
-        List<LoanVO> loanVOS = convertToLoanVO(loans);
+		
+        List<Loan> loans = loanRepository.findAllByStatus('A');
+		if(loans.isEmpty()) {
+			logger.warn("List is empty");
+			throw new DataNotFoundException("List is empty");
+		}
+		logger.info("List of Loans from service");
+		List<LoanVO> loanVOS = convertToLoanVOList(loans);
         return loanVOS;
+       
+		
+	
 	}
 
-    private List<LoanVO> convertToLoanVO(List<Loan> loans) {
+    private List<LoanVO> convertToLoanVOList(List<Loan> loans) {
+       List<LoanVO> loanVOS = new ArrayList<>();
+        
+            	LoanVO loanVO = new LoanVO();
+            	for(Loan loan:loans) {
+            	
+            		 loanVOS.add(convertToLoanVO(loan));
+            			}
+            			
+                   return	loanVOS;
+            	}
+    
 
-        List<LoanVO> loanVOS = new ArrayList<>();
+    
+ 
+    private LoanVO convertToLoanVO(Loan loan) {
 
-
-        return null;
+        LoanVO loanVO = new  LoanVO();
+    	  loanVO.setLoanId(loan.getLoanId());;
+    	  loanVO.setLoanDesc(loan.getLoanDesc());
+  		  loanVO.setLoanType(loan.getLoanType().getLoanDesc());
+  		  loanVO.setROI(loan.getROI());
+           return  loanVO;
     }
 
-//	public Optional<Loan> addLoan(Loan loan) throws DataNotFoundException{
-//		if((loan.getStatus()!='A')) {
-//			throw new DataNotFoundException("Loan is already created");
-//		}
-//		Loan loanInfo =loanRepository.save(loan);
-//		logger.info("Loan Created");
-//		return Optional.of(loanInfo);
-//	}
-//
+
+
 
     public Double getEMI(Double rate, Integer tenure, Double principal){
         Double emi;
@@ -118,5 +147,6 @@ public class LoanService {
     }
 
 
+	
 
 }
