@@ -36,7 +36,7 @@ public class Loan {
   
     private Integer updatedBy;
     
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+   @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JoinColumn(name = "LOAN_TYPE_ID")
     private LoanType loanType;
     
