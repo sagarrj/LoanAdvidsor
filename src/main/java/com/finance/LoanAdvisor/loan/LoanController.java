@@ -1,6 +1,7 @@
 package com.finance.LoanAdvisor.loan;
 
-import com.finance.LoanAdvisor.entities.Loan;
+
+import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.loan.VO.LoanVO;
 import com.finance.LoanAdvisor.loan.VO.RegisterRequest;
 import com.finance.LoanAdvisor.loan.VO.RegisterResponse;
@@ -40,11 +41,11 @@ public class LoanController {
 		RegisterResponse registerResponse = loanService.registerCustomerForLoan(registerRequest);
 		return new ResponseEntity<RegisterResponse>(registerResponse, HttpStatus.OK);
 	}
-
-	/**
-	 * Customer get the details about loan with using loanid That method is going to
-	 * service, from service Customer get loan by passing Loanid
-	 * @param id:{@link Integer}
+    
+    /**
+	 * This method accepts loan Id and returns loan details based on Id.
+	 * 
+	 * @param id : {@link Integer}
 	 * @return {@link ResponseEntity} of {@link LoanVO}
 	 */
 	@GetMapping(value = "/get/loan/{id}")
@@ -55,10 +56,10 @@ public class LoanController {
 	}
 
 	/**
-	 * customer get list of All loan That method is going to service, from service
-	 * Customer get loan by passing Loanid
+	 * This method returns list of available loans
+	
 	 * 
-	 * @return {@link LoanVO}
+	 * @return {@link List} of {@link LoanVO}
 	 */
 	@GetMapping(value = "/getAllLoan")
 	public List<LoanVO> getAllLoans() {

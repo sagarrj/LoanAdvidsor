@@ -3,6 +3,7 @@ package com.finance.LoanAdvisor.loan;
 import com.finance.LoanAdvisor.config.ApplicationException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.config.LoanConstants;
+import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Borrower;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
@@ -85,7 +86,7 @@ public class LoanService {
 	}
 
 	/**
-	 * customer get loan from loanid
+	 * This method accepts loan Id and returns loan details based on Id
 	 * 
 	 * @param id:{@link Integer}
 	 * @return {@link LoanVO}
@@ -93,11 +94,12 @@ public class LoanService {
 	 */
 	public LoanVO getLoan(int id) throws DataNotFoundException {
 
-		Loan loan = loanRepository.findById(id).orElse(null);
-		if (loan== null) {
+		Optional<Loan> optionalLoan = loanRepository.findById(id);
+		if (!optionalLoan.isPresent()) {
 			logger.warn("Loan not found");
 			throw new DataNotFoundException("Loan not found");
 		}
+		Loan loan = optionalLoan.get();
 		logger.info("Loan returned from service");
 		LoanVO loanVOS = convertToLoanVO(loan);
 		return loanVOS;
@@ -105,7 +107,7 @@ public class LoanService {
 	}
 
 	/**
-	 * Customer get list of all loan
+	 * This method returns list of all available Loan
 	 * 
 	 * @return {@link LoanVO}
 	 * @throws DataNotFoundException
@@ -124,10 +126,9 @@ public class LoanService {
 	}
 
 	/**
-	 * this method is called into getAllLoan method to fetch data from covert method
-	 * convertToLoanVOList give list of all loans which is present in database
+	 * This method converts List {@link loan} object into {@link LoanVO} object
 	 * 
-	 * @param loans
+	 * @param loans:{@link loan}
 	 * @return {@link LoanVO}
 	 */
 	private List<LoanVO> convertToLoanVOList(List<Loan> loans) {
@@ -142,12 +143,6 @@ public class LoanService {
 		return loanVOS;
 	}
 
-	/**
-	 * this method is called intogetLoan method to fetch data from covert method.
-	 * convertToLoanVOList give loan details with use of loanid
-	 * @param loan
-	 * @return {@link LoanVO}
-	 */
 	private LoanVO convertToLoanVO(Loan loan) {
 
 		LoanVO loanVO = new LoanVO();

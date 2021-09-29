@@ -15,6 +15,13 @@ import java.util.List;
 
 
 
+/**
+ * @author pkhedkar
+ * This entity class includes declaration of parameters of 
+ *         Customer class, no arguments constructors and parameterized constructors, getter
+ *         and setter of parameters.
+ *
+ */
 @Entity
 @Table
 @Data

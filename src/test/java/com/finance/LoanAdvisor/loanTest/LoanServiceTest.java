@@ -21,6 +21,7 @@ import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import com.finance.LoanAdvisor.loan.VO.RegisterRequest;
 import com.finance.LoanAdvisor.loan.VO.RegisterResponse;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,19 +31,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-
-
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.loan.LoanService;
 import com.finance.LoanAdvisor.loan.VO.LoanVO;
 
-
+/**
+ * @author pkhedkar This class includes all test cases of Customer controller
+ *
+ */
 @SpringBootTest
 public class LoanServiceTest {
 	@MockBean
 	LoanRepository loanRepository;
-	
+
 	@MockBean
 	CustomerRepository customerRepository;
 
@@ -74,7 +76,7 @@ public class LoanServiceTest {
 		loan.setCreatedBy(null);
 		loan.setUpdateDttm(null);
 		loan.setUpdatedBy(null);
-		LoanType loanType=new LoanType();
+		LoanType loanType = new LoanType();
 		loanType.setLoanDesc("HomeLoanDes");
 		loan.setLoanType(loanType);
 
@@ -90,40 +92,65 @@ public class LoanServiceTest {
 
 	}
 
+	/**
+	 * This method check test case for list of loan.
+	 * 
+	 * @throws DataNotFoundException
+	 */
 	@Test
 	@DisplayName("Test Get all Loan")
 	public void getAllLoan() throws DataNotFoundException {
-         List<LoanVO> listLoan= new ArrayList<>();
-		
-		listLoan.add(new LoanVO(1, "Home loan",7.0,"HomeLoanDes"));
-		
-		when(loanRepository.findAllByStatus('A')).thenReturn(
-				Stream.of(loan)
-						.collect(Collectors.toList()));
-	
-		 List<LoanVO> loanFromService=loanService.getAllLoan();
-
+		List<LoanVO> listLoan = new ArrayList<>();
+		listLoan.add(new LoanVO(1, "Home loan", 7.0, "HomeLoanDes"));
+		when(loanRepository.findAllByStatus('A')).thenReturn(Stream.of(loan).collect(Collectors.toList()));
+		List<LoanVO> loanFromService = loanService.getAllLoan();
 		Assertions.assertEquals(1, loanFromService.size());
-		Assertions.assertEquals(listLoan,loanFromService);
+		Assertions.assertEquals(listLoan, loanFromService);
 
 	}
 
+	@Test
+	public void getAllLoanNotFound() throws DataNotFoundException {
+		List<LoanVO> listLoan = new ArrayList<>();
+		listLoan.add(new LoanVO(1, "Home loan", 7.0, "HomeLoanDes"));
 
+		when(loanRepository.findAllByStatus('A')).thenReturn(new ArrayList<>());
+
+		Throwable exception = assertThrows(DataNotFoundException.class, () -> {
+			loanService.getAllLoan();
+		});
+		Assertions.assertEquals("List is empty", exception.getMessage());
+
+	}
+
+	/**
+	 * This method check test case for loan on basis of id.
+	 * 
+	 * @throws DataNotFoundException
+	 */
 	@Test
 	@DisplayName("Test Get Loan By Id")
 	public void testGetLoanById() throws DataNotFoundException {
 		doReturn(Optional.of(loan)).when(loanRepository).findById(1);
-
 		Loan loan = new Loan();
-		Optional<LoanVO> loan1 =Optional.of(loanService.getLoan(1));
+		Optional<LoanVO> loan1 = Optional.of(loanService.getLoan(1));
 		Assertions.assertTrue(loan1.isPresent());
 		Assertions.assertEquals(loanVO, loan1.get());
-	
-	//	Assertions.assertSame(loan1.get(), loan);
+
 	}
-	
+
+	@Test
+	@DisplayName("Test Get loan Not Found By Id")
+	public void getLoanByIdNotFound() {
+		when(loanRepository.findById(1)).thenReturn(Optional.ofNullable(null));
+		Throwable exception = assertThrows(DataNotFoundException.class, () -> {
+			loanService.getLoan(1);
+		});
+		Assertions.assertEquals("Loan not found", exception.getMessage());
+	}
+
 	@BeforeEach
-	void initCustomer(){
+	void initCustomer() {
 		customer = new Customer();
 		sanction = new Sanction();
 		borrower = new Borrower();
@@ -131,18 +158,16 @@ public class LoanServiceTest {
 
 	@Test
 	@DisplayName("Successful registration")
-	public void registerCustomerForLoanSuccess(){
+	public void registerCustomerForLoanSuccess() {
 		customer.setAge(50);
 		sanction.setROI(6.7);
 		sanction.setLoanAmount(2000000.0);
 
+		int customerId = 1;
+		int sanctionId = 1;
 
-		int customerId=1;
-		int sanctionId=1;
-
-		registerRequest = new RegisterRequest(customerId,sanctionId,10);
-		registerResponse = new RegisterResponse(10,22914.0);
-
+		registerRequest = new RegisterRequest(customerId, sanctionId, 10);
+		registerResponse = new RegisterResponse(10, 22914.0);
 
 		when(customerRepository.findById(customerId)).thenReturn(Optional.ofNullable(customer));
 		when(sanctionRepository.findById(sanctionId)).thenReturn(Optional.ofNullable(sanction));
@@ -150,29 +175,26 @@ public class LoanServiceTest {
 
 		RegisterResponse serviceResponse = loanService.registerCustomerForLoan(registerRequest);
 
-		Assertions.assertEquals(registerResponse,serviceResponse);
+		Assertions.assertEquals(registerResponse, serviceResponse);
 
 	}
 
 	@Test
 	@DisplayName("Data Not Found")
-	public void registerCustomerForLoanDataNotFound(){
-		int customerId=1000;
-		int sanctionId=1000;
+	public void registerCustomerForLoanDataNotFound() {
+		int customerId = 1000;
+		int sanctionId = 1000;
 
-		registerRequest = new RegisterRequest(customerId,sanctionId,10);
+		registerRequest = new RegisterRequest(customerId, sanctionId, 10);
 		when(customerRepository.findById(customerId)).thenReturn(Optional.ofNullable(null));
 		when(sanctionRepository.findById(sanctionId)).thenReturn(Optional.ofNullable(null));
 
-		Throwable exception = assertThrows(DataNotFoundException.class,()->{
-					loanService.registerCustomerForLoan(registerRequest);
+		Throwable exception = assertThrows(DataNotFoundException.class, () -> {
+			loanService.registerCustomerForLoan(registerRequest);
 		});
 
-		Assertions.assertEquals(LoanConstants.CUSTOMER_SANCTION_NOT_FOUND,exception.getMessage());
+		Assertions.assertEquals(LoanConstants.CUSTOMER_SANCTION_NOT_FOUND, exception.getMessage());
 
 	}
 
-		
-	}		
-
-
+}
