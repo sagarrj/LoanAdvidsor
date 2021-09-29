@@ -2,8 +2,6 @@ package com.finance.LoanAdvisor.loan;
 
 import com.finance.LoanAdvisor.config.ApplicationException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.config.LoanConstants;
-import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Borrower;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
@@ -19,12 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import com.finance.LoanAdvisor.entities.LoanType;
-
 import java.util.Optional;
 
 import static com.finance.LoanAdvisor.config.LoanConstants.*;
@@ -126,9 +122,9 @@ public class LoanService {
 	}
 
 	/**
-	 * This method converts List {@link loan} object into {@link LoanVO} object
+	 * This method converts List {@link Loan} object into {@link LoanVO} object
 	 * 
-	 * @param loans:{@link loan}
+	 * @param loans:{@link Loan}
 	 * @return {@link LoanVO}
 	 */
 	private List<LoanVO> convertToLoanVOList(List<Loan> loans) {
@@ -149,7 +145,7 @@ public class LoanService {
 		loanVO.setLoanId(loan.getLoanId());
 		;
 		loanVO.setLoanDesc(loan.getLoanDesc());
-		loanVO.setLoanType(loan.getLoanType().getLoanDesc());
+		loanVO.setLoanType(loan.getLoanType().getLoanDescription());
 		loanVO.setROI(loan.getROI());
 		return loanVO;
 	}
