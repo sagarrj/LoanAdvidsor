@@ -21,7 +21,11 @@ public class LoanController {
 	Logger logger = LoggerFactory.getLogger(LoanController.class);
     private final LoanService loanService ;
 
-    @GetMapping("/register")
+	/**
+	 * @param registerRequest
+	 * @return
+	 */
+    @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest
 	){
 
@@ -29,28 +33,28 @@ public class LoanController {
         return  new ResponseEntity<RegisterResponse>(registerResponse, HttpStatus.OK);
     }
 
+	//Get Loan by Id
 
 	@GetMapping(value = "/getLoan/{id}")
-	public ResponseEntity<Loan> getLoanById(@PathVariable int id) {
-	 Loan loan=loanService.getLoan(id).get();
-	 return  new ResponseEntity<Loan>(loan, HttpStatus.OK);
+	public ResponseEntity<LoanVO> getLoanById(@PathVariable int id) {
+	 LoanVO loan=loanService.getLoan(id);
+	 return  new ResponseEntity<LoanVO>(loan, HttpStatus.OK);
     }
 
+
+
+	//Get List of Loan
 
 	@GetMapping(value = "/getAllLoan")
 	public List<LoanVO> getAllLoans() {
 		return loanService.getAllLoan();
+			
 
 	}
 
-//	@PostMapping("/add")
-//	public ResponseEntity<Loan> addLoan(@RequestBody Loan loan) throws DataNotFoundException{
-//		logger.info("LoanType returned from controller");
-//		Optional<Loan> loanInfo =loanService.addLoan(loan);
-//		return new ResponseEntity<Loan>(loanInfo.get(),HttpStatus.CREATED);
-//
-//	}
-//
+
+
+
 
 
 }

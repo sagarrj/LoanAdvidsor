@@ -23,35 +23,63 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     private Integer customerId;
+    
+    
     private String firstName;
+    
+   
     private String lastName;
+    
+    
     private String city;
+    
+   
     private String gender;
+    
+   
     private String email;
+    
+    
     private Integer age;
+    
+    
     private String phoneNo;
+    
+   
     private Integer income;
+    
+    
     private String aadharNo;
+    
+    
     private String panNo;
+    
+    
     private Integer creditScore;
+    
+    
     private Integer initialAmount;
+    
+    
     private Integer loanRequirement;
     
+    
     private char status = 'A';
+    
     @Temporal(TemporalType.TIMESTAMP)
+    
     private Date createDttm;
+    
+    
     private Integer createdBy;
+    
     @Temporal(TemporalType.TIMESTAMP)
+    
     private Date updateDttm;
+    
+  
     private Integer updatedBy;
-
-
- /*   @Getter(value = AccessLevel.NONE)
-    @Setter(value = AccessLevel.NONE)
-    @ToString.Exclude
-    @OneToMany(mappedBy = "customer")
-    private Set<Sanction> sanctionSet = new HashSet<>();*/
-
 
 }
