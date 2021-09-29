@@ -1,6 +1,7 @@
 package com.finance.LoanAdvisor.customer;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 
@@ -41,41 +42,41 @@ public class CustomerService {
 	private final LoanRepository loanRepository;
 	private final LoanTypeRepository loanTypeRepository;
 	private final SanctionRepository sanctionRepository;
-	
+
 	Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
-	
 	/**
 	 * This method accepts and saves customer details and return an object of
 	 * {@link Customer} containing all arguments which has been saved.
+	 *
 	 * @param customer: {@link Customer}
-	 * @return {@link Optional} of {@link Customer}
+	 * @return customerVO :{@link CustomerVO}
 	 * @throws DataNotFoundException
 	 */
-	public CustomerVO addCustomer(Customer customer) throws DataNotFoundException{		
-		if(customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+	public CustomerVO addCustomer(Customer customer) throws DataNotFoundException {
+		if (customerRepository.findByEmail(customer.getEmail()) != null) {
 			logger.warn("Customer is already created");
 			throw new DataNotFoundException("Customer is already created");
 		}
 		customer.setStatus(STATUS);
 		customer.setCreateDttm(new Date());
 		customer.setCreatedBy(DEFAULT_ID);
-	    customerRepository.save(customer);
+		customerRepository.save(customer);
 		CustomerVO customerVO = convertToCustomerVO(customer);
-	    logger.info("Customer added");
+		logger.info("Customer added");
 		return customerVO;
 	}
 
-
 	/**
 	 * This method accepts customer Id and returns customer details based on Id.
+	 *
 	 * @param customerId
-	 * @return {@link Optional} of {@link Customer}
+	 * @return customerVO :{@link CustomerVO}
 	 * @throws DataNotFoundException
 	 */
 	public CustomerVO getCustomer(Integer customerId) throws DataNotFoundException {
 		Customer customer = customerRepository.findById(customerId).orElse(null);
-		if(customer==null) {
+		if (customer == null) {
 			logger.warn("Customer not found");
 			throw new DataNotFoundException("Customer not found");
 		}
@@ -86,12 +87,13 @@ public class CustomerService {
 
 	/**
 	 * This method returns list of all available customers
-	 * @return {@link List} of {@link Customer}
+	 *
+	 * @return {@link List} of {@link CustomerVO}
 	 * @throws DataNotFoundException
 	 */
 	public List<CustomerVO> getAllCustomers() throws DataNotFoundException {
-		List<Customer> customers = customerRepository.findAllByStatus('A');
-		if(customers.isEmpty()) {
+		List<Customer> customers = customerRepository.findAllByStatus(STATUS);
+		if (customers.isEmpty()) {
 			logger.warn("List is empty");
 			throw new DataNotFoundException("List is empty");
 		}
@@ -99,19 +101,22 @@ public class CustomerService {
 		logger.info("List of customers from service");
 		return customerVOList;
 	}
-	
 
-	private List<CustomerVO> convertToCustomerVOList(List<Customer> customers) {
-        List<CustomerVO> customerVOList = new ArrayList<>();
-        for(Customer customer:customers) {
-      	   customerVOList.add(convertToCustomerVO(customer));
-        	
-        }
+	/**
+	 * This method converts List {@link Customer} object into {@link CustomerVO} object
+	 *
+	 * @param customers : {@link Customer}
+	 * @return customerVOList: {@link List} of {@link CustomerVO}
+	 */
+	public List<CustomerVO> convertToCustomerVOList(List<Customer> customerList) {
+		List<CustomerVO> customerVOList = new ArrayList<>();
+		for (Customer customer : customerList) {
+			customerVOList.add(convertToCustomerVO(customer));
+		}
 		return customerVOList;
 	}
 
-
-	private CustomerVO convertToCustomerVO(Customer customer) {
+	public CustomerVO convertToCustomerVO(Customer customer) {
 		CustomerVO customerVO = new CustomerVO();
 		customerVO.setCustomerId(customer.getCustomerId());
 		customerVO.setFirstName(customer.getFirstName());
@@ -127,7 +132,7 @@ public class CustomerService {
 	 * This method checks the eliglibity of customers for loan
 	 * @throws CustomerNotEligibleException
 	 */
-	
+
 	public SanctionVO customerLoanEliglibity(int customerId, int loanId) {
 	Customer customer=customerRepository.findById(customerId).orElse(null);
 	Loan loan = loanRepository.findById(loanId).orElse(null);

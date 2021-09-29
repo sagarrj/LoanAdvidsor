@@ -16,6 +16,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+/**
+ * @author pkhedkar
+ * This entity class includes declaration of parameters of 
+ *         Customer class, no arguments constructors and parameterized constructors, getter
+ *         and setter of parameters.
+ *
+ */
 @Entity
 @Getter
 @Setter
