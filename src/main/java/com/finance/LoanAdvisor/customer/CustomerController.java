@@ -5,6 +5,9 @@ import java.util.List;
 
 import java.util.Optional;
 
+import com.finance.LoanAdvisor.Sanction.VO.SanctionVO;
+import com.finance.LoanAdvisor.customer.VO.CustomerEligiblityVO;
+import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,10 +72,16 @@ public class CustomerController {
 		CustomerVO customerInfo = customerService.addCustomer(customer);
 		return new ResponseEntity<CustomerVO>(customerInfo,HttpStatus.CREATED);
 	}
-	@GetMapping("/check/{customerId}/{loanId}/{loanTypeId}")
-	public boolean LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId, @PathVariable("loanTypeId") Integer loanTypeId ) {
-		return customerService.customerLoanEliglibity(customerId, loanId, loanTypeId);
-	}
+//	@PostMapping("/sanction/{customerId}/{loanId}")
+//	public ResponseEntity<CustomerEligiblityVO> LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
+//		CustomerEligiblityVO customerEligiblityVO = customerService.customerLoanEliglibity(customerId, loanId, loanTypeId);
+//		return new ResponseEntity<CustomerEligiblityVO>(customerEligiblityVO,HttpStatus.OK);
+//	}
 
+	@PostMapping("/addSanction")
+	public ResponseEntity<SanctionVO> addDataToSanction(@RequestBody Sanction sanction) {
+		SanctionVO sanctionVO= customerService.addDataForSanction(sanction);
+		return new ResponseEntity<SanctionVO>(sanctionVO,HttpStatus.CREATED);
+	}
 
 }

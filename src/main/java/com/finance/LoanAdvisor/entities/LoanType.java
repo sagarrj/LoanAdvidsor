@@ -28,7 +28,7 @@ public class LoanType {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    @Column(name = "LOAN_TYPE_ID")
 	    private Integer loanTypeId;
-	    @Column(name = "LOAN_DESC")
+	    @Column(name = "LOAN_DESCRIPTION")
 	    private String loanDesc;
 	    @Column(name = "STATUS")
 	    private char status = 'A';

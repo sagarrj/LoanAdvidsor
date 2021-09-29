@@ -6,11 +6,18 @@ import java.util.List;
 
 import java.util.Optional;
 
+import com.finance.LoanAdvisor.Sanction.VO.SanctionVO;
+import com.finance.LoanAdvisor.customer.VO.CustomerEligiblityVO;
+import com.finance.LoanAdvisor.entities.Sanction;
+import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.hibernate.internal.build.AllowSysOut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.finance.LoanAdvisor.config.CustomerNotEligibleException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Customer;
@@ -39,6 +46,7 @@ public class CustomerService {
 	private final CustomerRepository customerRepository;
 	private final LoanRepository loanRepository;
 	private final LoanTypeRepository loanTypeRepository;
+	private final SanctionRepository sanctionRepository;
 	
 	Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
@@ -121,80 +129,98 @@ public class CustomerService {
 		return customerVO;
 	}
 
-
+	/**
+	 * This method checks the eliglibity of customers for loan
+	 * @throws CustomerNotEligibleException
+	 */
 	
-	public boolean customerLoanEliglibity(int customerId, int loanId, int loanTypeId) {
-		//Customer customer=customerRepository.findById(customerId).orElse(null);
-		Optional<Customer> customer = customerRepository.findById(customerId);
-		Loan loan = loanRepository.findById(loanId).orElse(null);
-		LoanType  loanType= loanTypeRepository.findById(loanTypeId).orElse(null);
-		//System.out.println("Customer "+customer.get());
-		int age=0;
-		int income=0;
-		int creditScore=0;
-		Double roi=0.0;
+	public CustomerEligiblityVO customerLoanEliglibity(int customerId, int loanId) {
+	Customer customer=customerRepository.findById(customerId).orElse(null);
+	Loan loan = loanRepository.findById(loanId).orElse(null);
+	int age=0;
+	int income=0;
+	int creditScore=0;
+	Double roi= 0.0;
 		String loanDesc=null;
 		int loanAmount=0;
-		if(customer.isPresent()) {
-			Customer customerInfo = customer.get();
+		boolean flag= false;
 
-			age=customerInfo.getAge();
-			 income = customerInfo.getIncome();
-			 creditScore = customerInfo.getCreditScore();
-			//System.out.println(age+""+income+""+creditScore);
+		if(customer!=null) {
+			 age=customer.getAge();
+			 income = customer.getIncome();
+			 creditScore = customer.getCreditScore();
 		}
 		else {
 			throw new DataNotFoundException("Customer not found");
 			}
 		if(loan!=null) {
 			 roi = loan.getROI();
+			 loanDesc = loan.getLoanType().getLoanDesc();
+
 		}
 		else {
 			throw new DataNotFoundException("Rate of Interest not found");
 			}
-		
-		if (loanType!=null) {
-			 loanDesc= loanType.getLoanDesc();
-		}
-		else {
-			throw new DataNotFoundException("Loan description not found");
-			}
-		if(creditScore>700){
-			if(income>240000){
-			if(age>18 && age<=60){
+
+		if((creditScore>700) && (income>40000) && (age>18 && age<=60)){
+				flag = true;
 			switch(loanDesc){
-			case "2 wheeler":
-			 loanAmount=income/12*5;
+			case "GOLD":
+				loanAmount=(income/12)*5;
 			break;
-			case "car loan":
-			loanAmount=income/12*20;
+			case "CAR":
+				loanAmount=income/12*20;
 			break;
-			/*case "personal loan":
-			loanAmount=income*loanDuration(in years);
-			break;*/
-			case "home loan":
-			loanAmount=income/12*80;
+			case "PERSONAL":
+				loanAmount=income*3;
+			break;
+			case "HOME":
+				loanAmount=income/12*80;
+			break;
+
+			case "EDUCATIONAL":
+				loanAmount=income/12*30;
 			break;
 			}
-			//sop("for loan type "+loanDesc+" you are eligible upto "+loanAmount+ "with ROI "+roi);
 			}
-			/*else{
-			"Not Eligible for loan"}
-			}
-			else{
-			"Not Eligible for loan"
-			}
-			}
+
 			else{
 
-			"Not Eligible for loan"
-			}*/
-	}
-			
-	
+				throw new CustomerNotEligibleException("Customer is not eligible for loan");
+			}
+
+		if(flag!=true){
+
+		throw new CustomerNotEligibleException("Customer is not eligible for loan");
+
 		}
-		return true;
+
+		Sanction sanction = new Sanction();
+		sanction.setLoanAmount(loanAmount);
+		return "for loan type "+loanDesc+" you are eligible upto "+loanAmount+ " with ROI "+roi;
 	}
-	
-	
+
+	/**
+	 * This method accepts and saves sanction details and return an object of
+	 * {@link Sanction} containing all arguments which has been saved.
+	 * @throws DataNotFoundException
+	 */
+//	public SanctionVO addDataForSanction(Sanction sanction) throws DataNotFoundException{
+//		if(sanctionRepository.findById(sanction.getSanctionId()).isPresent()){
+//			logger.warn("Sanction details is already present");
+//			throw new DataNotFoundException("Sanction is already created");
+//		}
+//		 Sanction sanctionInfo = sanctionRepository.save(sanction);
+//		SanctionVO sanctionVO= convertToSanctionVO(sanctionInfo.getSanctionId());
+//		return sanctionVO;
+	}
+
+	private CustomerEligiblityVO convertToEligiblityVO(Integer loanAmount, Double roi) {
+		CustomerEligiblityVO customerEligiblityVO= new CustomerEligiblityVO();
+		customerEligiblityVO.setLoanAmount(loanAmount);
+		customerEligiblityVO.setRoi(roi);
+		return customerEligiblityVO;
+	}
+
+
 }
