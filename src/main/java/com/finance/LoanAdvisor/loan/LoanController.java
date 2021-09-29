@@ -21,7 +21,11 @@ public class LoanController {
 	Logger logger = LoggerFactory.getLogger(LoanController.class);
     private final LoanService loanService ;
 
-    @GetMapping("/register")
+	/**
+	 * @param registerRequest
+	 * @return
+	 */
+    @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest
 	){
 

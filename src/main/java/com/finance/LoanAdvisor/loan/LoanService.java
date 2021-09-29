@@ -1,5 +1,6 @@
 package com.finance.LoanAdvisor.loan;
 
+import com.finance.LoanAdvisor.config.ApplicationException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.config.LoanConstants;
 import com.finance.LoanAdvisor.entities.Borrower;
@@ -25,9 +26,12 @@ import com.finance.LoanAdvisor.entities.LoanType;
 
 import java.util.Optional;
 
+import static com.finance.LoanAdvisor.config.LoanConstants.*;
+
 @Service
 @RequiredArgsConstructor
 public class LoanService {
+
 
     Logger logger = LoggerFactory.getLogger(LoanController.class);
 
@@ -38,21 +42,18 @@ public class LoanService {
 
     public RegisterResponse registerCustomerForLoan(RegisterRequest registerRequest) {
 
-//        List<Borrower> borrowers = borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(customerId, sanctionId);
-//        Borrower borrower = borrowers.get(0);
-//        return  borrower.getSanction();
-
         Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
         Optional<Sanction> optionalSanction = sanctionRepository.findById(registerRequest.getSanctionId());
         if(optionalCustomer.isPresent() && optionalSanction.isPresent()){
             Customer customer = optionalCustomer.get();
             Sanction sanction = optionalSanction.get();
 
-            Integer maxTenure = LoanConstants.MAX_AGE - customer.getAge();
-
+            Integer maxTenure = MAX_AGE - customer.getAge();
+            if(maxTenure < 1){
+                throw new ApplicationException(CANNOT_PROVIDE_LOAN_FOR_SUCH_SMALL_DURATION + maxTenure + " Max age is "+ MAX_AGE);
+            }
             Integer tenure = registerRequest.getPreferredTenure() < maxTenure ?
                     registerRequest.getPreferredTenure() : maxTenure;
-
             Double emi = getEMI(sanction.getROI(),tenure,sanction.getLoanAmount());
 
             Borrower borrower = new Borrower();
@@ -62,8 +63,6 @@ public class LoanService {
             borrower.setEmi(emi);
             borrower.setStatus('A');
             borrower.setCreateDttm(new Date());
-
-
             Borrower save = borrowerRepository.save(borrower);
 
             RegisterResponse registerResponse = new RegisterResponse();
@@ -72,7 +71,7 @@ public class LoanService {
             return registerResponse;
 
         }else{
-            throw new DataNotFoundException("customer or sanction not found");
+            throw new DataNotFoundException(CUSTOMER_SANCTION_NOT_FOUND);
         }
 
     }
@@ -144,7 +143,7 @@ public class LoanService {
         emi = (principal * rate * (float)Math.pow(1 + rate, tenure))
                 / (float)(Math.pow(1 + rate, tenure) - 1);
 
-        return emi;
+        return (double) Math.round(emi);
     }
     
 

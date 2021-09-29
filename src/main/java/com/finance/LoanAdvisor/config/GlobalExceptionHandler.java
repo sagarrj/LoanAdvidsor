@@ -22,7 +22,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
     
-    @ExceptionHandler(DataNotFoundException.class)
+    @ExceptionHandler(value = {DataNotFoundException.class})
     public ResponseEntity<ErrorDetails> handleException(DataNotFoundException exception, WebRequest request) {
         ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
         return new ResponseEntity<ErrorDetails>(details, HttpStatus.NOT_FOUND);
