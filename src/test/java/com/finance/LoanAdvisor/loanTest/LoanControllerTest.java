@@ -86,7 +86,7 @@ public class LoanControllerTest {
 	public void testLoanById() throws Exception {
 	
 		Mockito.when( loanservice.getLoan(1)).thenReturn(loanVO);
-		String url = "/loan/getLoan/1";
+		String url = "/loan/get/loan/1";
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String inputJson = this.mapToJson(loanVO);

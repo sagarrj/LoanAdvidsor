@@ -13,48 +13,57 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author pkhedkar
+ *
+ */
 @RestController
 @RequestMapping("/loan")
 @RequiredArgsConstructor
 public class LoanController {
 
 	Logger logger = LoggerFactory.getLogger(LoanController.class);
-    private final LoanService loanService ;
+	private final LoanService loanService;
+
 
 	/**
 	 * @param registerRequest
 	 * @return
 	 */
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest
-	){
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest){
 
-        RegisterResponse registerResponse = loanService.registerCustomerForLoan(registerRequest);
-        return  new ResponseEntity<RegisterResponse>(registerResponse, HttpStatus.OK);
-    }
+//	@GetMapping("/register")
+//	public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
 
-	//Get Loan by Id
 
-	@GetMapping(value = "/getLoan/{id}")
+		RegisterResponse registerResponse = loanService.registerCustomerForLoan(registerRequest);
+		return new ResponseEntity<RegisterResponse>(registerResponse, HttpStatus.OK);
+	}
+
+	/**
+	 * Customer get the details about loan with using loanid That method is going to
+	 * service, from service Customer get loan by passing Loanid
+	 * @param id:{@link Integer}
+	 * @return {@link ResponseEntity} of {@link LoanVO}
+	 */
+	@GetMapping(value = "/get/loan/{id}")
+
 	public ResponseEntity<LoanVO> getLoanById(@PathVariable int id) {
-	 LoanVO loan=loanService.getLoan(id);
-	 return  new ResponseEntity<LoanVO>(loan, HttpStatus.OK);
-    }
+		LoanVO loan = loanService.getLoan(id);
+		return new ResponseEntity<LoanVO>(loan, HttpStatus.OK);
+	}
 
-
-
-	//Get List of Loan
-
+	/**
+	 * customer get list of All loan That method is going to service, from service
+	 * Customer get loan by passing Loanid
+	 * 
+	 * @return {@link LoanVO}
+	 */
 	@GetMapping(value = "/getAllLoan")
 	public List<LoanVO> getAllLoans() {
 		return loanService.getAllLoan();
-			
 
 	}
-
-
-
-
-
 
 }

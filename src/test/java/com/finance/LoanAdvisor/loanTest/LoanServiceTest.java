@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -29,10 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+
+
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.loan.LoanService;
 import com.finance.LoanAdvisor.loan.VO.LoanVO;
+
 
 @SpringBootTest
 public class LoanServiceTest {
@@ -71,7 +75,7 @@ public class LoanServiceTest {
 		loan.setUpdateDttm(null);
 		loan.setUpdatedBy(null);
 		LoanType loanType=new LoanType();
-		loanType.setLoanDesc("hOMELOANdES");
+		loanType.setLoanDesc("HomeLoanDes");
 		loan.setLoanType(loanType);
 
 	}
@@ -80,38 +84,41 @@ public class LoanServiceTest {
 	void initEmployeeObject1() {
 		loanVO = new LoanVO();
 		loanVO.setLoanId(1);
-		loanVO.setLoanDesc("HOMELOAN");
-		loanVO.setLoanType("hOMELOANdES");
+		loanVO.setLoanDesc("Home loan");
+		loanVO.setLoanType("HomeLoanDes");
 		loanVO.setROI(7.0);
 
 	}
 
 	@Test
 	@DisplayName("Test Get all Loan")
-	public void getAllLoan() {
+	public void getAllLoan() throws DataNotFoundException {
          List<LoanVO> listLoan= new ArrayList<>();
 		
-		listLoan.add(new LoanVO(1, "HOMELOAN",7.0,null ));
+		listLoan.add(new LoanVO(1, "Home loan",7.0,"HomeLoanDes"));
 		
 		when(loanRepository.findAllByStatus('A')).thenReturn(
 				Stream.of(loan)
 						.collect(Collectors.toList()));
-		
+	
 		 List<LoanVO> loanFromService=loanService.getAllLoan();
-		
-		assertEquals(1, loanFromService.size());
-		
-		
-		//Assertions.assertEquals(listLoan,loanFromService);
+
+		Assertions.assertEquals(1, loanFromService.size());
+		Assertions.assertEquals(listLoan,loanFromService);
 
 	}
+
 
 	@Test
 	@DisplayName("Test Get Loan By Id")
 	public void testGetLoanById() throws DataNotFoundException {
 		doReturn(Optional.of(loan)).when(loanRepository).findById(1);
-		Loan loan1 = new Loan();
-	//	Assertions.assertTrue(loan1.isPresent());
+
+		Loan loan = new Loan();
+		Optional<LoanVO> loan1 =Optional.of(loanService.getLoan(1));
+		Assertions.assertTrue(loan1.isPresent());
+		Assertions.assertEquals(loanVO, loan1.get());
+	
 	//	Assertions.assertSame(loan1.get(), loan);
 	}
 	
@@ -164,4 +171,8 @@ public class LoanServiceTest {
 		Assertions.assertEquals(LoanConstants.CUSTOMER_SANCTION_NOT_FOUND,exception.getMessage());
 
 	}
-}
+
+		
+	}		
+
+
