@@ -127,7 +127,7 @@ public class LoanService {
         LoanVO loanVO = new  LoanVO();
     	  loanVO.setLoanId(loan.getLoanId());;
     	  loanVO.setLoanDesc(loan.getLoanDesc());
-  		  loanVO.setLoanType(loan.getLoanType().getLoanDesc());
+  		  loanVO.setLoanType(loan.getLoanType().getLoanDescription());
   		  loanVO.setROI(loan.getROI());
            return  loanVO;
     }

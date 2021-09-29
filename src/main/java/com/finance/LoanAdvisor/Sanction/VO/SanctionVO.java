@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class SanctionVO {
-    private Integer sanctionId;
+    private double LoanAmount;
+    private double roi;
+    private String loanType;
 
 }

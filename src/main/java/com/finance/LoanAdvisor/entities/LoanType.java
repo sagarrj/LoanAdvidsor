@@ -29,7 +29,7 @@ public class LoanType {
 	    @Column(name = "LOAN_TYPE_ID")
 	    private Integer loanTypeId;
 	    @Column(name = "LOAN_DESCRIPTION")
-	    private String loanDesc;
+	    private String loanDescription;
 	    @Column(name = "STATUS")
 	    private char status = 'A';
 	    @Temporal(TemporalType.TIMESTAMP)

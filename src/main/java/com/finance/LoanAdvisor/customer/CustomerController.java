@@ -3,10 +3,7 @@ package com.finance.LoanAdvisor.customer;
 
 import java.util.List;
 
-import java.util.Optional;
-
 import com.finance.LoanAdvisor.Sanction.VO.SanctionVO;
-import com.finance.LoanAdvisor.customer.VO.CustomerEligiblityVO;
 import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,16 +69,23 @@ public class CustomerController {
 		CustomerVO customerInfo = customerService.addCustomer(customer);
 		return new ResponseEntity<CustomerVO>(customerInfo,HttpStatus.CREATED);
 	}
-//	@PostMapping("/sanction/{customerId}/{loanId}")
-//	public ResponseEntity<CustomerEligiblityVO> LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
-//		CustomerEligiblityVO customerEligiblityVO = customerService.customerLoanEliglibity(customerId, loanId, loanTypeId);
-//		return new ResponseEntity<CustomerEligiblityVO>(customerEligiblityVO,HttpStatus.OK);
+
+	@GetMapping("/sanction/{customerId}/{loanId}")
+	public ResponseEntity<SanctionVO> LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
+		SanctionVO sanctionInfo = customerService.customerLoanEliglibity(customerId, loanId);
+		return new ResponseEntity<SanctionVO>(sanctionInfo,HttpStatus.OK);
+	}
+
+//	@PostMapping("/sanction")
+//	public ResponseEntity<?> LoanEliglibity(@RequestBody Sanction sanction) {
+//		Sanction sanctionInfo = customerService.customerLoanEliglibity(sanction);
+//		return new ResponseEntity<>(sanctionInfo,HttpStatus.OK);
 //	}
 
-	@PostMapping("/addSanction")
-	public ResponseEntity<SanctionVO> addDataToSanction(@RequestBody Sanction sanction) {
-		SanctionVO sanctionVO= customerService.addDataForSanction(sanction);
-		return new ResponseEntity<SanctionVO>(sanctionVO,HttpStatus.CREATED);
-	}
+//	@PostMapping("/addSanction")
+//	public ResponseEntity<SanctionVO> addDataToSanction(@RequestBody Sanction sanction) {
+//		SanctionVO sanctionVO= customerService.addDataForSanction(sanction);
+//		return new ResponseEntity<SanctionVO>(sanctionVO,HttpStatus.CREATED);
+//	}
 
 }

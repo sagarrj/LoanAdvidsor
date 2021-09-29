@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.finance.LoanAdvisor.Sanction.VO.SanctionVO;
-import com.finance.LoanAdvisor.customer.VO.CustomerEligiblityVO;
 import com.finance.LoanAdvisor.entities.Sanction;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import lombok.RequiredArgsConstructor;
 
-import org.hibernate.internal.build.AllowSysOut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,13 +20,9 @@ import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.entities.LoanType;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanTypeRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 
 
 /**
@@ -134,7 +128,7 @@ public class CustomerService {
 	 * @throws CustomerNotEligibleException
 	 */
 	
-	public CustomerEligiblityVO customerLoanEliglibity(int customerId, int loanId) {
+	public SanctionVO customerLoanEliglibity(int customerId, int loanId) {
 	Customer customer=customerRepository.findById(customerId).orElse(null);
 	Loan loan = loanRepository.findById(loanId).orElse(null);
 	int age=0;
@@ -142,7 +136,7 @@ public class CustomerService {
 	int creditScore=0;
 	Double roi= 0.0;
 		String loanDesc=null;
-		int loanAmount=0;
+		double loanAmount=0;
 		boolean flag= false;
 
 		if(customer!=null) {
@@ -155,14 +149,15 @@ public class CustomerService {
 			}
 		if(loan!=null) {
 			 roi = loan.getROI();
-			 loanDesc = loan.getLoanType().getLoanDesc();
+			 loanDesc = loan.getLoanType().getLoanDescription();
+
 
 		}
 		else {
 			throw new DataNotFoundException("Rate of Interest not found");
 			}
 
-		if((creditScore>700) && (income>40000) && (age>18 && age<=60)){
+		if((creditScore>700) && (income>20000) && (age>18 && age<=60)){
 				flag = true;
 			switch(loanDesc){
 			case "GOLD":
@@ -195,32 +190,45 @@ public class CustomerService {
 
 		}
 
-		Sanction sanction = new Sanction();
+		Sanction sanction= new Sanction();
+
+		sanction.setCustomer(customer);
+		sanction.setLoan(loan);
+
 		sanction.setLoanAmount(loanAmount);
-		return "for loan type "+loanDesc+" you are eligible upto "+loanAmount+ " with ROI "+roi;
+
+		sanction.setROI(roi);
+		sanction.setCreateDttm(new Date());
+		sanction.setStatus('A');
+
+		sanctionRepository.save(sanction);
+
+		SanctionVO sanctionVO = convertTOSanctionVO(sanction);
+
+		return sanctionVO;
+
 	}
 
-	/**
-	 * This method accepts and saves sanction details and return an object of
-	 * {@link Sanction} containing all arguments which has been saved.
-	 * @throws DataNotFoundException
-	 */
-//	public SanctionVO addDataForSanction(Sanction sanction) throws DataNotFoundException{
-//		if(sanctionRepository.findById(sanction.getSanctionId()).isPresent()){
-//			logger.warn("Sanction details is already present");
-//			throw new DataNotFoundException("Sanction is already created");
-//		}
-//		 Sanction sanctionInfo = sanctionRepository.save(sanction);
-//		SanctionVO sanctionVO= convertToSanctionVO(sanctionInfo.getSanctionId());
+
+
+	private SanctionVO convertTOSanctionVO(Sanction sanction){
+
+		SanctionVO sanctionVO= new SanctionVO();
+
+		sanctionVO.setLoanAmount(sanction.getLoanAmount());
+		sanctionVO.setRoi(sanction.getROI());
+		sanctionVO.setLoanType(sanction.getLoan().getLoanType().getLoanDescription());
+
+		return sanctionVO;
+
+	}
+
+//	private SanctionVO convertToEligiblity(Integer loanAmount, Double roi) {
+//		SanctionVO sanctionVO= new SanctionVO();
+//		sanctionVO.setLoanAmount(loanAmount);
+//		sanctionVO.setRoi(roi);
 //		return sanctionVO;
-	}
-
-	private CustomerEligiblityVO convertToEligiblityVO(Integer loanAmount, Double roi) {
-		CustomerEligiblityVO customerEligiblityVO= new CustomerEligiblityVO();
-		customerEligiblityVO.setLoanAmount(loanAmount);
-		customerEligiblityVO.setRoi(roi);
-		return customerEligiblityVO;
-	}
+//	}
 
 
 }
