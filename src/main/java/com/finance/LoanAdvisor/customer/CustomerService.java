@@ -1,11 +1,9 @@
 package com.finance.LoanAdvisor.customer;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
-
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,7 @@ import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
  * @author priypawa
  *
  */
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
@@ -38,11 +37,11 @@ public class CustomerService {
 	 * This method accepts and saves customer details and return an object of
 	 * {@link Customer} containing all arguments which has been saved.
 	 * @param customer: {@link Customer}
-	 * @return {@link Optional} of {@link Customer}
+	 * @return  customerVO :{@link CustomerVO}
 	 * @throws DataNotFoundException
 	 */
 	public CustomerVO addCustomer(Customer customer) throws DataNotFoundException{		
-		if(customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+		if(customerRepository.findByEmail(customer.getEmail())!=null) {
 			logger.warn("Customer is already created");
 			throw new DataNotFoundException("Customer is already created");
 		}
@@ -59,7 +58,7 @@ public class CustomerService {
 	/**
 	 * This method accepts customer Id and returns customer details based on Id.
 	 * @param customerId
-	 * @return {@link Optional} of {@link Customer}
+	 * @return customerVO :{@link CustomerVO}
 	 * @throws DataNotFoundException
 	 */
 	public CustomerVO getCustomer(Integer customerId) throws DataNotFoundException {
@@ -75,7 +74,7 @@ public class CustomerService {
 
 	/**
 	 * This method returns list of all available customers
-	 * @return {@link List} of {@link Customer}
+	 * @return {@link List} of {@link CustomerVO}
 	 * @throws DataNotFoundException
 	 */
 	public List<CustomerVO> getAllCustomers() throws DataNotFoundException {
@@ -90,17 +89,16 @@ public class CustomerService {
 	}
 	
 
-	private List<CustomerVO> convertToCustomerVOList(List<Customer> customers) {
+	public List<CustomerVO> convertToCustomerVOList(List<Customer> customers) {
         List<CustomerVO> customerVOList = new ArrayList<>();
         for(Customer customer:customers) {
       	   customerVOList.add(convertToCustomerVO(customer));
-        	
         }
 		return customerVOList;
 	}
 
 
-	private CustomerVO convertToCustomerVO(Customer customer) {
+	public CustomerVO convertToCustomerVO(Customer customer) {
 		CustomerVO customerVO = new CustomerVO();
 		customerVO.setCustomerId(customer.getCustomerId());
 		customerVO.setFirstName(customer.getFirstName());
