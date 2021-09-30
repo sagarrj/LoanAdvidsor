@@ -2,9 +2,7 @@ package com.finance.LoanAdvisor.customer;
 
 import java.util.List;
 
-
 import javax.validation.Valid;
-
 
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Sanction;
@@ -13,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +22,25 @@ import org.springframework.web.bind.annotation.RestController;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author priypawa
  *
  */
+@Validated
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
+
+	private static final String CUSTOMER_IS_ALREADY_CREATED = "Customer is already created";
+
+	private static final String CUSTOMER_NOT_FOUND = "Customer not found";
+
+	private static final String LIST_IS_EMPTY = "List is empty";
 
 	@Autowired
 	CustomerService customerService;
@@ -47,11 +56,11 @@ public class CustomerController {
 	 *
 	 */
 	@GetMapping("/list")
-	public ResponseEntity<List<CustomerDTO>> getAllCustomers() throws DataNotFoundException{
+	public ResponseEntity<List<CustomerDTO>> getAllCustomers() throws DataNotFoundException {
 		logger.info("List of customers from controller");
 		List<CustomerDTO> customerDTOList = customerService.getAllCustomers();
-		if(customerDTOList.isEmpty())
-			throw new DataNotFoundException("List is empty");
+		if (customerDTOList.isEmpty())
+			throw new DataNotFoundException(LIST_IS_EMPTY);
 		return new ResponseEntity<List<CustomerDTO>>(customerDTOList, HttpStatus.OK);
 
 	}
@@ -64,11 +73,13 @@ public class CustomerController {
 	 */
 	@GetMapping("/view/{id}")
 	public ResponseEntity<CustomerDTO> getCustomer(
-			@PathVariable("id") @NotNull(message = "Customer Id should not be empty") Integer customerId) throws DataNotFoundException {
+			@PathVariable("id") @NotNull(message = "Customer Id should not be empty")  @Min(value = 1, message = "Customer Id must be greater than or equal to 1") 
+            @Max(value = 1000, message = "Customer Id must be lower than or equal to 1000") Integer customerId)
+			throws DataNotFoundException {
 		logger.info("Customer returned from controller");
 		CustomerDTO customerInfo = customerService.getCustomer(customerId);
-		if(customerInfo==null) {
-			throw new DataNotFoundException("Customer not found");
+		if (customerInfo == null) {
+			throw new DataNotFoundException(CUSTOMER_NOT_FOUND);
 		}
 		return new ResponseEntity<CustomerDTO>(customerInfo, HttpStatus.OK);
 	}
@@ -81,25 +92,26 @@ public class CustomerController {
 	 * @return {@link ResponseEntity} of {@link CustomerDTO}
 	 */
 	@PostMapping("/add")
-	public ResponseEntity<CustomerDTO> addCustomer(@Valid @RequestBody Customer customer) throws DataNotFoundException{
+	public ResponseEntity<CustomerDTO> addCustomer(@Valid @RequestBody Customer customer) throws DataNotFoundException {
 		logger.info("Customer returned from controller");
 		CustomerDTO customerInfo = customerService.addCustomer(customer);
-		if(customerInfo==null) {
-			throw new DataNotFoundException("Customer is already created");
+		if (customerInfo == null) {
+			throw new DataNotFoundException(CUSTOMER_IS_ALREADY_CREATED);
 		}
 		return new ResponseEntity<CustomerDTO>(customerInfo, HttpStatus.CREATED);
 	}
 
 	/**
-	 * This gets data from table and return an object of
-	 * {@link SanctionDTO} containing all arguments which has been saved
-	 * {@link Sanction} Object.
+	 * This gets data from table and return an object of {@link SanctionDTO}
+	 * containing all arguments which has been saved {@link Sanction} Object.
+	 * 
 	 * @return {@link ResponseEntity} of {@link SanctionDTO}
 	 */
 	@GetMapping("/sanction/{customerId}/{loanId}")
-	public ResponseEntity<SanctionDTO> loanEligibility(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
+	public ResponseEntity<SanctionDTO> loanEligibility(@PathVariable("customerId") Integer customerId,
+			@PathVariable("loanId") Integer loanId) {
 		SanctionDTO sanctionInfo = customerService.customerLoanEligibility(customerId, loanId);
-		return new ResponseEntity<SanctionDTO>(sanctionInfo,HttpStatus.OK);
+		return new ResponseEntity<SanctionDTO>(sanctionInfo, HttpStatus.OK);
 	}
 
 }

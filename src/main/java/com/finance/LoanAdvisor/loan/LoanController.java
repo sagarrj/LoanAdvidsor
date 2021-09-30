@@ -1,7 +1,4 @@
 package com.finance.LoanAdvisor.loan;
-
-
-
 import com.finance.LoanAdvisor.loan.VO.LoanVO;
 import com.finance.LoanAdvisor.loan.VO.RegisterRequest;
 import com.finance.LoanAdvisor.loan.VO.RegisterResponse;
