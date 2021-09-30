@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-
-import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;

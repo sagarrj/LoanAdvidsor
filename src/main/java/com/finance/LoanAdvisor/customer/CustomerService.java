@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.config.ErrorDetails;
 import com.finance.LoanAdvisor.entities.Sanction;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
@@ -18,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.config.CustomerNotEligibleException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
@@ -171,21 +171,21 @@ public class CustomerService {
 				roi = loan.getROI();
 				loanDesc = loan.getLoanType().getLoanDescription();
 			} else {
-				throw new DataNotFoundException("Rate of Interest not found");
+				throw new DataNotFoundException("Rate of Interest data not found");
 			}
 			if ((creditScore > 700) && (income > 20000) && (age > 18 && age <= 60)) {
 				switch (loanDesc) {
-					case "GOLD":
+					case "GOLD ":
 						maxLoanAmount = (income *12) * 3;
 						break;
-					case "CAR":
+					case "CAR ":
 						maxLoanAmount = (income*12) * 4;
 						break;
-					case "PERSONAL":
-						maxLoanAmount = income * 12 * 3;
+					case "PERSONAL ":
+						maxLoanAmount = (income * 12) * 2;
 						break;
 					case "HOME ":
-						maxLoanAmount = income*12 * 20;
+						maxLoanAmount = (income*12) * 20;
 						break;
 
 					case "EDUCATIONAL":
@@ -215,7 +215,6 @@ public class CustomerService {
 				sanction.setCreateDttm(new Date());
 				sanction.setStatus('A');
 				sanctionRepository.save(sanction);
-
 				SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
 				return sanctionVO;
 
