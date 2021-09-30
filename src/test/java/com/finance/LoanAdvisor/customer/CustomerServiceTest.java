@@ -10,6 +10,9 @@ import java.util.Optional;
 
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.entities.Sanction;
+import com.finance.LoanAdvisor.entities.repository.LoanRepository;
+import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,12 @@ class CustomerServiceTest {
 
 	@MockBean
 	CustomerRepository customerRepository;
+
+	@MockBean
+	LoanRepository loanRepository;
+
+	@MockBean
+	SanctionRepository sanctionRepository;
 
 	@Autowired
 	CustomerService customerService;
@@ -76,25 +85,28 @@ class CustomerServiceTest {
 		customer.setIncome(70000);
 
 	}
-	@BeforeEach
-	void initCustomer(){
-		customer.setCustomerId(1);
-		customer.setIncome(30000);
-		customer.setCreditScore(700);
-		customer.setAge(30);
-	}
+//	@BeforeEach
+//	void initCustomer(){
+//		customer.setCustomerId(1);
+//		customer.setIncome(30000);
+//		customer.setCreditScore(700);
+//		customer.setAge(30);
+//	}
 
 	@BeforeEach
 	void initLoan(){
+		loan = new Loan();
         loan.setLoanId(5);
 		loan.setROI(8.50);
 		loan.setLoanDesc("EDUCATIONAL");
+
 	}
 
 	@BeforeEach
 	void initSanctionDTO(){
+		sanctionDTO=new SanctionDTO();
 		sanctionDTO.setRoi(8.50);
-		sanctionDTO.setLoanAmount(900000);
+		sanctionDTO.setLoanAmount(30000.0);
 		sanctionDTO.setLoanType("EDUCATIONAL");
 
 	}
@@ -133,7 +145,24 @@ class CustomerServiceTest {
 	}
 	@Test
 	void testCustomerLoanEligibility(){
+//		Customer customer = new Customer();
+		//when(customerRepository.findById(10)).thenReturn(customerVO);
+		Sanction sanction = new Sanction(1,customer,loan,30000.0,8.50,'A',null,null,null,null);
+//		doReturn(customer).when(customerRepository.findById(10));
+//		doReturn(loan).when(loanRepository.findById(5));
+//		doReturn(sanctionDTO).when(customerService.convertTOSanctionVO(sanction));
+//		doReturn(sanction).when(sanctionRepository.save(sanction));
 
+		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
+		when(loanRepository.findById(5)).thenReturn(Optional.of(loan));
+	     when(customerService.convertTOSanctionVO(sanction)).thenReturn(sanctionDTO);
+		when(sanctionRepository.save(sanction)).thenReturn(sanction);
+
+		when(customerRepository.save(customer)).thenReturn(customer);
+		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10,5);
+        Assertions.assertNotNull(customer);
+		Assertions.assertNotNull(loan);
+		Assertions.assertEquals(30000.0,sanctionDTO.getLoanAmount());
 	}
 
 }

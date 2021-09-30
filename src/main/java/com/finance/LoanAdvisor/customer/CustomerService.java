@@ -161,16 +161,16 @@ public class CustomerService {
 		if((creditScore>700) && (income>20000) && (age>18 && age<=60)){
 				flag = true;
 			switch(loanDesc){
-			case "GOLD":
+			case "GOLD ":
 				loanAmount=(income/12)*5;
 			break;
-			case "CAR":
+			case "CAR ":
 				loanAmount=(income/12)*20;
 			break;
-			case "PERSONAL":
+			case "PERSONAL ":
 				loanAmount=income*12*3;
 			break;
-			case "HOME":
+			case "HOME ":
 				loanAmount=income*80;
 			break;
 
@@ -190,15 +190,15 @@ public class CustomerService {
 		sanction.setCustomer(customer);
 		sanction.setLoan(loan);
 		sanction.setLoanAmount(loanAmount);
-		sanction.setROI(roi);
 		sanction.setCreateDttm(new Date());
 		sanction.setStatus('A');
+		sanction.setROI(roi);
 		sanctionRepository.save(sanction);
 		SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
 		return sanctionVO;
 	}
 
-	private SanctionDTO convertTOSanctionVO(Sanction sanction){
+	public SanctionDTO convertTOSanctionVO(Sanction sanction){
 		SanctionDTO sanctionVO= new SanctionDTO();
 		sanctionVO.setLoanAmount(sanction.getLoanAmount());
 		sanctionVO.setRoi(sanction.getROI());
