@@ -1,9 +1,9 @@
-package com.finance.LoanAdvisor.repositoryTest;
+package com.finance.LoanAdvisor.entities.repository;
 
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.LoanType;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
-import com.finance.LoanAdvisor.loan.VO.LoanVO;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +12,19 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+
+import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.entities.LoanType;
+import com.finance.LoanAdvisor.entities.repository.LoanRepository;
+import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 
 
@@ -29,7 +36,7 @@ public class LoanRepositoryTest {
 	@Autowired
 	LoanRepository loanRepository;
 	private Loan loan;
-	private LoanVO loanVO;
+	private LoanDTO loanVO;
 	
 	@BeforeEach
 	void initEmployeeObject() {
@@ -49,7 +56,7 @@ public class LoanRepositoryTest {
 
 	@BeforeEach
 	void initEmployeeObject1() {
-		loanVO = new LoanVO();
+		loanVO = new LoanDTO();
 		loanVO.setLoanId(1);
 		loanVO.setLoanDesc("HOMELOAN");
 		loanVO.setLoanType("HomeLoanDes");
@@ -58,9 +65,9 @@ public class LoanRepositoryTest {
 	}
 	@Test
 	public void testAllLoan() {
-		 List<LoanVO> listLoanVO= new ArrayList<>();
-		 listLoanVO.add(new LoanVO(1, "HOMELOAN",7.0,null ));
-		List<LoanVO> listLoan = Arrays.asList(loanVO);
+		 List<LoanDTO> listLoanVO= new ArrayList<>();
+		 listLoanVO.add(new LoanDTO(1, "HOMELOAN",7.0,null ));
+		List<LoanDTO> listLoan = Arrays.asList(loanVO);
 		List<Loan> allCustomer =loanRepository.findAllByStatus('A');
 		assertThat(allCustomer.size()).isGreaterThanOrEqualTo(1);
 		
@@ -68,9 +75,9 @@ public class LoanRepositoryTest {
 	
 	@Test
 	public void testFindByIdUser() {
-		 List<LoanVO> listLoanVO= new ArrayList<>();
-		 listLoanVO.add(new LoanVO(1, "HOMELOAN",7.0,null ));
-			List<LoanVO> listLoan = Arrays.asList(loanVO);
+		 List<LoanDTO> listLoanVO= new ArrayList<>();
+		 listLoanVO.add(new LoanDTO(1, "HOMELOAN",7.0,null ));
+			List<LoanDTO> listLoan = Arrays.asList(loanVO);
 			loanRepository.findById(1);
 		Assertions.assertEquals(1, loan.getLoanId());
 

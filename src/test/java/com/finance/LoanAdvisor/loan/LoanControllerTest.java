@@ -1,11 +1,11 @@
-package com.finance.LoanAdvisor.loanTest;
+package com.finance.LoanAdvisor.loan;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.loan.LoanController;
 import com.finance.LoanAdvisor.loan.LoanService;
-import com.finance.LoanAdvisor.loan.VO.LoanVO;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,10 +22,24 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finance.LoanAdvisor.config.DataNotFoundException;
+import com.finance.LoanAdvisor.customer.CustomerController;
+import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
+import com.finance.LoanAdvisor.entities.Customer;
+import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.entities.LoanType;
+import com.finance.LoanAdvisor.loan.LoanController;
+import com.finance.LoanAdvisor.loan.LoanService;
+import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 /**
  * @author pkhedkar
@@ -40,7 +54,10 @@ public class LoanControllerTest {
 	private Loan loan;
 	@Autowired
 	private MockMvc mockMvc;
-	private LoanVO loanVO;
+
+	private LoanDTO loanDTO;
+	
+
 
 	@BeforeEach
 	void initEmployeeObject() {
@@ -58,27 +75,46 @@ public class LoanControllerTest {
 
 	@BeforeEach
 	void initEmployeeObject1() {
-		loanVO = new LoanVO();
-		loanVO.setLoanId(1);
-		loanVO.setLoanDesc("HOMELOAN");
-		loanVO.setLoanType(null);
-		loanVO.setROI(7.0);
+		loanDTO = new LoanDTO();
+		loanDTO.setLoanId(1);
+		loanDTO.setLoanDesc("HOMELOAN");
+		loanDTO.setLoanType(null);
+		loanDTO.setROI(7.0);
 	}
 
 	/**
-	 * This method tests status and {@link List} of {@link Loan} getAllLoan method
+	 * This method tests status and {@link List} of {@link Loan} test cgetAllLoan method
 	 * {@link LoanController}.
 	 *
 	 * @throws Exception
 	 */
-	@DisplayName("GET /getAllLoan")
+	
 	@Test
-	public void getAllLoan() throws Exception {
-		List<LoanVO> listLoan = new ArrayList<>();
-		listLoan.add(new LoanVO(1, "HOMELOAN", 7.0, null));
-		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoan);
-		String url = "/loan/getAllLoan";
+	@DisplayName(" Test Get AllLoan")
+	public void testGetAllLoan() throws Exception  {
+		List<LoanDTO> listLoanDTO = new ArrayList<>();
+		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
+		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
+		String url = "/loan/list";
 		mockMvc.perform(get(url)).andExpect(status().isOk());
+		
+	}
+	
+	/**
+	 * This method tests status and {@link List} of {@link Loan} testGetAllLoanNotFound method
+	 * @throws Exception
+	 */
+	@Test
+	@DisplayName("Test Get AllLoan Not Found")
+	public void testGetAllLoanNotFound() throws Exception 
+	{
+		List<LoanDTO> listLoanDTO = new ArrayList<>();
+		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
+		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
+			mockMvc.perform(
+					get("/loan/list" +loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(status().isNotFound());
+	
 	}
 
 	/**
@@ -87,15 +123,16 @@ public class LoanControllerTest {
 	 * @throws Exception
 	 */
 
-	@DisplayName("GET/geLoanById")
+	
 	@Test
-	public void LoanById() throws Exception {
+	@DisplayName("Test Get Loan By Id")
+	public void testGetLoan() throws Exception {
 
-		Mockito.when(loanservice.getLoan(1)).thenReturn(loanVO);
-		String url = "/loan/get/loan/1";
+		Mockito.when(loanservice.getLoan(1)).thenReturn(loanDTO);
+		String url = "/loan/view/1";
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String inputJson = this.mapToJson(loanVO);
+		String inputJson = this.mapToJson(loanDTO);
 		String outputJson = result.getResponse().getContentAsString();
 		assertThat(outputJson).isEqualTo(inputJson);
 		mockMvc.perform(get(url)).andExpect(status().isOk());
@@ -108,35 +145,17 @@ public class LoanControllerTest {
 		return objectMapper.writeValueAsString(object);
 	}
 
-	@Test
-	@DisplayName("GetAllLoanNotFound")
-	public void GetAllLoanNotFound() {
-		List<LoanVO> listLoan = new ArrayList<>();
-		listLoan.add(new LoanVO(1, "HOMELOAN", 7.0, null));
-		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoan);
-		try {
-			mockMvc.perform(
-					get("/loan/getAllLoan" + loanVO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isNotFound());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 
-//	@DisplayName("GET/geLoanByIdNotFound")
-//	@Test
-//	public void LoanByIdNotFound() throws Exception {
-////
-////		Mockito.when( loanservice.getLoan(1)).thenReturn(loanVO);
-////		mockMvc.perform(get("/loan/get/loan/" + loanVO.getLoanId().toString())
-////			     .contentType(MediaType.APPLICATION_JSON))
-////			     .andExpect(status().isNotFound());
-//
-//		Mockito.doThrow(new DataNotFoundException()).when(loanservice).getLoan(1);
-//		mockMvc.perform(get("/loan/get/loan/" + loanVO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
-//				.andExpect(status().isNotFound());
-//
-//	}
+	@Test
+	@DisplayName("Test Get Loan Not Found")
+	public void testGetLoanNotFound() throws Exception  {
+		LoanDTO loanDTO = new LoanDTO ();
+		doReturn(loanDTO).when(loanservice).getLoan(1);
+		 mockMvc.perform(get("/loan/view/{id}",10))
+	        .andExpect(status().isNotFound());
+}
+
+
 
 }

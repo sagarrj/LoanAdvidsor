@@ -49,6 +49,11 @@ public class Loan {
     private Integer updatedBy;
     
 
+    
+   /* @OneToMany(mappedBy = "loan")
+ 
+=======
+
    
 
     
@@ -59,6 +64,7 @@ public class Loan {
     
   
 
+>>>>>>> cf208cca6162a7c3cfe518188ac9e34eca4d641e
     /*@OneToMany(mappedBy = "loan")
 
     private Set<Sanction> sanctionSet = new HashSet<>();*/

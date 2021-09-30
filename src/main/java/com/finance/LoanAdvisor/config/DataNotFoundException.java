@@ -17,6 +17,10 @@ public class DataNotFoundException extends RuntimeException {
     public DataNotFoundException(String message) {
     	super(message);
 	}
+
+	public DataNotFoundException(Integer loanId) {
+		// TODO Auto-generated constructor stub
+	}
 	
 	
 	
