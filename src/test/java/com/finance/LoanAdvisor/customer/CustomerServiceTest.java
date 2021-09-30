@@ -11,6 +11,10 @@ import java.util.Optional;
 
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.entities.LoanType;
+import com.finance.LoanAdvisor.entities.Sanction;
+import com.finance.LoanAdvisor.entities.repository.LoanRepository;
+import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +39,12 @@ class CustomerServiceTest {
 
 	@MockBean
 	CustomerRepository customerRepository;
+
+	@MockBean
+	LoanRepository loanRepository;
+
+	@MockBean
+	SanctionRepository sanctionRepository;
 
 	@Autowired
 	CustomerService customerService;
@@ -84,25 +94,30 @@ class CustomerServiceTest {
 		customerDTO.setIncome(70000);
 
 	}
-	@BeforeEach
-	void initCustomer(){
-		customer.setCustomerId(1);
-		customer.setIncome(30000);
-		customer.setCreditScore(700);
-		customer.setAge(30);
-	}
+//	@BeforeEach
+//	void initCustomer(){
+//		customer.setCustomerId(1);
+//		customer.setIncome(30000);
+//		customer.setCreditScore(700);
+//		customer.setAge(30);
+//	}
 
 	@BeforeEach
 	void initLoan(){
+		LoanType loanType= new LoanType();
+		loanType.setLoanDescription("EDUCATIONAL");
+		loan = new Loan();
         loan.setLoanId(5);
 		loan.setROI(8.50);
-		loan.setLoanDesc("EDUCATIONAL");
+		loan.setLoanType(loanType);
+
 	}
 
 	@BeforeEach
 	void initSanctionDTO(){
+		sanctionDTO=new SanctionDTO();
 		sanctionDTO.setRoi(8.50);
-		sanctionDTO.setLoanAmount(900000);
+		sanctionDTO.setLoanAmount(30000.0);
 		sanctionDTO.setLoanType("EDUCATIONAL");
 
 	}
@@ -119,7 +134,7 @@ class CustomerServiceTest {
 		Assertions.assertNotNull(customerVOList);
 		Assertions.assertEquals(savedCustomerDTOList, customerVOList);
 	}
-	
+
 	@Test
 	@DisplayName("Test Customer List --Not Found")
 	void testGetAllCustomersInvalid() {
@@ -129,7 +144,7 @@ class CustomerServiceTest {
 	    customerService.getAllCustomers();
 
 		});
-		
+
 		Assertions.assertEquals(LIST_IS_EMPTY, exception.getMessage());
 
 	}
@@ -142,17 +157,17 @@ class CustomerServiceTest {
 		Assertions.assertTrue(customerInfo.isPresent());
 		Assertions.assertEquals(customerDTO, customerInfo.get());
 	}
-	
+
 	@Test
 	@DisplayName("Test Get Customer --Not Found")
 	void testGetCustomerInvalid() throws DataNotFoundException {
 		  doReturn(Optional.empty()).when(customerRepository).findById(10);
 		  Throwable exception = assertThrows(DataNotFoundException.class,()->{
 			  Optional.of(customerService.getCustomer(10));
-                
+
 			});
 		  Assertions.assertEquals(CUSTOMER_NOT_FOUND, exception.getMessage());
-		
+
 
 	}
 
@@ -169,7 +184,7 @@ class CustomerServiceTest {
 		
 	}
 
-	
+
 	@Test
 	@DisplayName("Test Add Customer --Not Found")
 	void testAddCustomerInvalid() throws DataNotFoundException{
@@ -183,7 +198,18 @@ class CustomerServiceTest {
 	@Test
 	void testCustomerLoanEligibility(){
 
-
+		customer.setLoanRequirement(30000);
+		customer.setGender("Male");
+		Sanction sanction = new Sanction(1,customer,loan,30000.0,8.50,'A',null,null,null,null);
+		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
+		when(loanRepository.findById(5)).thenReturn(Optional.of(loan));
+//	     when(customerService.convertTOSanctionVO(sanction)).thenReturn(sanctionDTO);
+		when(sanctionRepository.save(sanction)).thenReturn(sanction);
+		when(customerRepository.save(customer)).thenReturn(customer);
+		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10,5);
+        Assertions.assertNotNull(customer);
+		Assertions.assertNotNull(loan);
+		Assertions.assertEquals(30000.0,sanctionDTO.getLoanAmount());
 	}
 
 }
