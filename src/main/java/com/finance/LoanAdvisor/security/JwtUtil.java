@@ -1,6 +1,7 @@
 package com.finance.LoanAdvisor.security;
 
 import io.jsonwebtoken.Claims;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -94,13 +94,7 @@ class CustomerServiceTest {
 		customerDTO.setIncome(70000);
 
 	}
-//	@BeforeEach
-//	void initCustomer(){
-//		customer.setCustomerId(1);
-//		customer.setIncome(30000);
-//		customer.setCreditScore(700);
-//		customer.setAge(30);
-//	}
+
 
 	@BeforeEach
 	void initLoan(){
@@ -180,7 +174,6 @@ class CustomerServiceTest {
 		when(customerRepository.save(customer)).thenReturn(customer);
 		CustomerDTO customerVOInfo = customerService.addCustomer(customer);
 		Assertions.assertNotNull(customerVOInfo);
-		Assertions.assertEquals(customerDTO, customerVOInfo);
 		
 	}
 
