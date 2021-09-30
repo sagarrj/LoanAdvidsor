@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
+import com.finance.LoanAdvisor.entities.Loan;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,8 @@ class CustomerServiceTest {
 
 	private Customer customer;
 	private  CustomerVO customerVO;
+	private SanctionDTO sanctionDTO;
+	private Loan loan;
 
 	private static final int DEFAULT_ID = 0;
 
@@ -72,6 +76,28 @@ class CustomerServiceTest {
 		customer.setIncome(70000);
 
 	}
+	@BeforeEach
+	void initCustomer(){
+		customer.setCustomerId(1);
+		customer.setIncome(30000);
+		customer.setCreditScore(700);
+		customer.setAge(30);
+	}
+
+	@BeforeEach
+	void initLoan(){
+        loan.setLoanId(5);
+		loan.setROI(8.50);
+		loan.setLoanDesc("EDUCATIONAL");
+	}
+
+	@BeforeEach
+	void initSanctionDTO(){
+		sanctionDTO.setRoi(8.50);
+		sanctionDTO.setLoanAmount(900000);
+		sanctionDTO.setLoanType("EDUCATIONAL");
+
+	}
 
 	@Test
 	void testGetAllCustomers() {
@@ -104,6 +130,10 @@ class CustomerServiceTest {
 		Assertions.assertNotNull(customerVOInfo);
 		Assertions.assertEquals(savedCustomerVO, customerVOInfo);
 		
+	}
+	@Test
+	void testCustomerLoanEligibility(){
+
 	}
 
 }

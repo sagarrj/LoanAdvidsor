@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.Sanction.VO;
+package com.finance.LoanAdvisor.Sanction.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class SanctionVO {
+public class SanctionDTO {
     private double LoanAmount;
     private double roi;
     private String loanType;

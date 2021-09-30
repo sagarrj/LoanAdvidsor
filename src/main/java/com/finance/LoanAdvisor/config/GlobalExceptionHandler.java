@@ -13,26 +13,30 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 
 @ControllerAdvice
-public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler
-{
+public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
+    @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         String bodyOfResponse = "Something went wrong";
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
-    
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleException(DataNotFoundException exception, WebRequest request) {
         ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
         return new ResponseEntity<ErrorDetails>(details, HttpStatus.NOT_FOUND);
     }
-    
+
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<Object> handleAllExceptions(Exception exception, WebRequest request) {
         ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
         return new ResponseEntity<Object>(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(CustomerNotEligibleException.class)
+    public ResponseEntity<ErrorDetails> handleException(CustomerNotEligibleException exception, WebRequest request) {
+        ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
+        return new ResponseEntity<ErrorDetails>(details, HttpStatus.NOT_FOUND);
 
+    }
 }

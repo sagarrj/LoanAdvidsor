@@ -2,7 +2,7 @@ package com.finance.LoanAdvisor.customer;
 
 import java.util.List;
 
-import com.finance.LoanAdvisor.Sanction.VO.SanctionVO;
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,22 +71,16 @@ public class CustomerController {
 		return new ResponseEntity<CustomerVO>(customerInfo, HttpStatus.CREATED);
 	}
 
+	/**
+	 * This gets data from table and return an object of
+	 * {@link SanctionDTO} containing all arguments which has been saved
+	 * {@link Sanction} Object.
+	 * @return {@link ResponseEntity} of {@link SanctionDTO}
+	 */
 	@GetMapping("/sanction/{customerId}/{loanId}")
-	public ResponseEntity<SanctionVO> LoanEliglibity(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
-		SanctionVO sanctionInfo = customerService.customerLoanEliglibity(customerId, loanId);
-		return new ResponseEntity<SanctionVO>(sanctionInfo,HttpStatus.OK);
+	public ResponseEntity<SanctionDTO> loanEligibility(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
+		SanctionDTO sanctionInfo = customerService.customerLoanEligibility(customerId, loanId);
+		return new ResponseEntity<SanctionDTO>(sanctionInfo,HttpStatus.OK);
 	}
-
-//	@PostMapping("/sanction")
-//	public ResponseEntity<?> LoanEliglibity(@RequestBody Sanction sanction) {
-//		Sanction sanctionInfo = customerService.customerLoanEliglibity(sanction);
-//		return new ResponseEntity<>(sanctionInfo,HttpStatus.OK);
-//	}
-
-//	@PostMapping("/addSanction")
-//	public ResponseEntity<SanctionVO> addDataToSanction(@RequestBody Sanction sanction) {
-//		SanctionVO sanctionVO= customerService.addDataForSanction(sanction);
-//		return new ResponseEntity<SanctionVO>(sanctionVO,HttpStatus.CREATED);
-//	}
 
 }
