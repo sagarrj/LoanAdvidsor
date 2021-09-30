@@ -1,5 +1,8 @@
 package com.finance.LoanAdvisor.loan;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.config.ApplicationException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.Borrower;
@@ -10,25 +13,23 @@ import com.finance.LoanAdvisor.entities.repository.BorrowerRepository;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
-import com.finance.LoanAdvisor.loan.VO.LoanVO;
-import com.finance.LoanAdvisor.loan.VO.RegisterRequest;
-import com.finance.LoanAdvisor.loan.VO.RegisterResponse;
+import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
+import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
+import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import static com.finance.LoanAdvisor.config.LoanConstants.*;
 
-/**
- * @author pkhedkar
- *
- */
 /**
  * @author pkhedkar
  *
@@ -83,71 +84,108 @@ public class LoanService {
 
 	/**
 	 * This method accepts loan Id and returns loan details based on Id
-	 * 
 	 * @param id:{@link Integer}
-	 * @return {@link LoanVO}
+	 * @return {@link LoanDTO}
 	 * @throws DataNotFoundException
 	 */
-	public LoanVO getLoan(int id) throws DataNotFoundException {
+	public LoanDTO getLoan(int id) throws DataNotFoundException {
 
 		Optional<Loan> optionalLoan = loanRepository.findById(id);
-		if (!optionalLoan.isPresent()) {
+//Optional.ofNullable(optionalLoan)!=null
+	
+		if (!optionalLoan.isPresent()||Optional.ofNullable(optionalLoan)==null)
+		{
 			logger.warn("Loan not found");
-			throw new DataNotFoundException("Loan not found");
+			throw new DataNotFoundException(LOAN_NOT_FOUND);
 		}
+		
 		Loan loan = optionalLoan.get();
 		logger.info("Loan returned from service");
-		LoanVO loanVOS = convertToLoanVO(loan);
+		LoanDTO loanVOS = convertToLoanDTO(loan);
 		return loanVOS;
-
+		
+		
+		
 	}
 
 	/**
 	 * This method returns list of all available Loan
 	 * 
-	 * @return {@link LoanVO}
+	 * @return {@link LoanDTO}
 	 * @throws DataNotFoundException
 	 */
-	public List<LoanVO> getAllLoan() throws DataNotFoundException {
+	public List<LoanDTO> getAllLoan() throws DataNotFoundException {
 
-		List<Loan> loans = loanRepository.findAllByStatus('A');
+		List<Loan> loans = loanRepository.findAllByStatus(ACTIVE);
 		if (loans.isEmpty()) {
 			logger.warn("List is empty");
-			throw new DataNotFoundException("List is empty");
+			throw new DataNotFoundException(LIST_IS_EMPTY);
 		}
 		logger.info("List of Loans from service");
-		List<LoanVO> loanVOS = convertToLoanVOList(loans);
-		return loanVOS;
+		List<LoanDTO> loanDTO = convertToLoanDTOList(loans);
+		return loanDTO;
+		
 
 	}
 
 	/**
+<<<<<<< HEAD
+	 * This method converts List {@link loan} object into {@link LoanDTO} object
+	 * 
+	 * @param loans:{@link loan}
+	 * @return {@link LoanDTO}
+=======
 	 * This method converts List {@link Loan} object into {@link LoanVO} object
 	 * 
 	 * @param loans:{@link Loan}
 	 * @return {@link LoanVO}
+>>>>>>> cf208cca6162a7c3cfe518188ac9e34eca4d641e
 	 */
-	private List<LoanVO> convertToLoanVOList(List<Loan> loans) {
-		List<LoanVO> loanVOS = new ArrayList<>();
+	private List<LoanDTO> convertToLoanDTOList(List<Loan> loans) {
+		List<LoanDTO> loanDTO = new ArrayList<>();
 
-		LoanVO loanVO = new LoanVO();
+		LoanDTO loanDTOS = new LoanDTO();
 		for (Loan loan : loans) {
 
-			loanVOS.add(convertToLoanVO(loan));
+			loanDTO.add(convertToLoanDTO(loan));
 		}
 
-		return loanVOS;
+		return loanDTO;
 	}
 
-	private LoanVO convertToLoanVO(Loan loan) {
 
-		LoanVO loanVO = new LoanVO();
-		loanVO.setLoanId(loan.getLoanId());
-		;
-		loanVO.setLoanDesc(loan.getLoanDesc());
-		loanVO.setLoanType(loan.getLoanType().getLoanDescription());
-		loanVO.setROI(loan.getROI());
-		return loanVO;
+	private LoanDTO convertToLoanDTO(Loan loan) {
+//	      ObjectMapper mapper = new ObjectMapper();
+//	      LoanDTO loanDTO= new LoanDTO();
+//	      loanDTO.setLoanId(loan.getLoanId());
+//	      loanDTO.setLoanDesc(loan.getLoanDesc());
+//	      loanDTO.setLoanType(loan.getLoanType().getLoanDesc());
+//	      loanDTO.setROI(loan.getROI());
+//	      //map json to student
+//	      try{
+//	    	   LoanDTO loanDTOS = mapper.readValues(loanDTO, LoanDTO.class);
+//	         
+//	       //  System.out.println(loanDTOs);
+//	         
+//	         loanDTO = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(loanDTO);
+//	         
+//	      return loanDTOS;
+//	      }
+//	      catch (JsonParseException e) { e.printStackTrace();}
+//	      catch (JsonMappingException e) { e.printStackTrace(); }
+//	      catch (IOException e) { e.printStackTrace(); }
+//	      
+	      
+	      
+		LoanDTO loanDTO = new LoanDTO();
+		loanDTO.setLoanId(loan.getLoanId());
+		loanDTO.setLoanDesc(loan.getLoanDesc());
+		loanDTO.setLoanType(loan.getLoanType().getLoanDescription());
+		loanDTO.setROI(loan.getROI());
+		return loanDTO;
+
+	
+
 	}
 
 	public Double getEMI(Double rate, Integer tenure, Double principal) {

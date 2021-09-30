@@ -1,10 +1,14 @@
 package com.finance.LoanAdvisor.loan;
 
 
-import com.finance.LoanAdvisor.customer.VO.CustomerVO;
-import com.finance.LoanAdvisor.loan.VO.LoanVO;
-import com.finance.LoanAdvisor.loan.VO.RegisterRequest;
-import com.finance.LoanAdvisor.loan.VO.RegisterResponse;
+import com.finance.LoanAdvisor.config.DataNotFoundException;
+
+import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
+import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
+import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
+
+
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,33 +46,42 @@ public class LoanController {
 		return new ResponseEntity<RegisterResponse>(registerResponse, HttpStatus.OK);
 	}
 
-    /**
+    
+	/**
+
 	 * This method accepts loan Id and returns loan details based on Id.
 	 *
 	 * @param id : {@link Integer}
-	 * @return {@link ResponseEntity} of {@link LoanVO}
+	 * @return {@link ResponseEntity} of {@link LoanDTO}
 	 */
-	@GetMapping(value = "/get/loan/{id}")
+	@GetMapping(value = "/view/{id}")
 
-	public ResponseEntity<LoanVO> getLoanById(@PathVariable int id) {
-		LoanVO loan = loanService.getLoan(id);
-		return new ResponseEntity<LoanVO>(loan, HttpStatus.OK);
+	public ResponseEntity<LoanDTO> getLoan(@PathVariable int id) {
+		LoanDTO loan = loanService.getLoan(id);
+		return new ResponseEntity<LoanDTO>(loan, HttpStatus.OK);
+		
 	}
 
 	/**
 	 * This method returns list of available loans
+<<<<<<< HEAD
+	
+	 * 
+	 * @return {@link List} of {@link LoanDTO}
+=======
 
 	 *
 	 * @return {@link List} of {@link LoanVO}
+>>>>>>> cf208cca6162a7c3cfe518188ac9e34eca4d641e
 	 */
-	@GetMapping(value = "/getAllLoan")
-	public List<LoanVO> getAllLoans() {
-		return loanService.getAllLoan();
+	@GetMapping(value = "/list")
+	public ResponseEntity<List<LoanDTO>>getAllLoans() {
+		List<LoanDTO> loanDTOList= loanService.getAllLoan();
+			logger.info("List of customers from controller");
+			return new ResponseEntity<List<LoanDTO>>(loanDTOList, HttpStatus.OK);
 
-	}
-
-
-
+			
+}
 
 
 

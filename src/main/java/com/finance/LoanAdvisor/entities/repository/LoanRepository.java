@@ -1,7 +1,7 @@
 package com.finance.LoanAdvisor.entities.repository;
 
 import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.loan.VO.LoanVO;
+import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 
 import java.util.List;
 

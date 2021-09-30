@@ -53,7 +53,7 @@ class CustomerRepositoryTest {
 
 	@Test
 	@DisplayName("Test findByEmail")
-	void testFindByEmail() {
+	void testFindByEmailValid() {
 		doReturn(customer).when(customerRepository).findByEmail("poojapatil@gmail.com");
 		Customer customerInfo = customerRepository.findByEmail("poojapatil@gmail.com");
 		Assertions.assertNotNull(customerInfo);

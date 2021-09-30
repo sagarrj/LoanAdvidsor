@@ -2,6 +2,10 @@ package com.finance.LoanAdvisor.customer;
 
 import java.util.List;
 
+
+import javax.validation.Valid;
+
+
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
@@ -16,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.finance.LoanAdvisor.customer.VO.CustomerVO;
+import com.finance.LoanAdvisor.config.DataNotFoundException;
+import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author priypawa
@@ -34,27 +40,37 @@ public class CustomerController {
 
 	/**
 	 * This method returns list of available customers
+	 * 
+	 * @return {@link List} of {@link CustomerDTO}
 	 *
-	 * @return {@link List} of {@link CustomerVO}
+	 * @return {@link List} of {@link CustomerDTO}
 	 *
 	 */
 	@GetMapping("/list")
-	public List<CustomerVO> getAllCustomers() {
+	public ResponseEntity<List<CustomerDTO>> getAllCustomers() throws DataNotFoundException{
 		logger.info("List of customers from controller");
-		return customerService.getAllCustomers();
+		List<CustomerDTO> customerDTOList = customerService.getAllCustomers();
+		if(customerDTOList.isEmpty())
+			throw new DataNotFoundException("List is empty");
+		return new ResponseEntity<List<CustomerDTO>>(customerDTOList, HttpStatus.OK);
+
 	}
 
 	/**
 	 * This method accepts customer Id and returns customer details based on Id.
 	 *
 	 * @param customerId : {@link Integer}
-	 * @return {@link ResponseEntity} of {@link CustomerVO}
+	 * @return {@link ResponseEntity} of {@link CustomerDTO}
 	 */
 	@GetMapping("/view/{id}")
-	public ResponseEntity<CustomerVO> getCustomer(@PathVariable("id") Integer customerId) {
+	public ResponseEntity<CustomerDTO> getCustomer(
+			@PathVariable("id") @NotNull(message = "Customer Id should not be empty") Integer customerId) throws DataNotFoundException {
 		logger.info("Customer returned from controller");
-		CustomerVO customerInfo = customerService.getCustomer(customerId);
-		return new ResponseEntity<CustomerVO>(customerInfo, HttpStatus.OK);
+		CustomerDTO customerInfo = customerService.getCustomer(customerId);
+		if(customerInfo==null) {
+			throw new DataNotFoundException("Customer not found");
+		}
+		return new ResponseEntity<CustomerDTO>(customerInfo, HttpStatus.OK);
 	}
 
 	/**
@@ -62,13 +78,16 @@ public class CustomerController {
 	 * {@link Customer} containing all arguments which has been saved.
 	 * 
 	 * @param customer : {@link Customer} Object.
-	 * @return {@link ResponseEntity} of {@link CustomerVO}
+	 * @return {@link ResponseEntity} of {@link CustomerDTO}
 	 */
 	@PostMapping("/add")
-	public ResponseEntity<CustomerVO> addCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<CustomerDTO> addCustomer(@Valid @RequestBody Customer customer) throws DataNotFoundException{
 		logger.info("Customer returned from controller");
-		CustomerVO customerInfo = customerService.addCustomer(customer);
-		return new ResponseEntity<CustomerVO>(customerInfo, HttpStatus.CREATED);
+		CustomerDTO customerInfo = customerService.addCustomer(customer);
+		if(customerInfo==null) {
+			throw new DataNotFoundException("Customer is already created");
+		}
+		return new ResponseEntity<CustomerDTO>(customerInfo, HttpStatus.CREATED);
 	}
 
 	/**
