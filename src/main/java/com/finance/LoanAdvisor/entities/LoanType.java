@@ -12,7 +12,6 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LoanType {
@@ -38,8 +36,8 @@ public class LoanType {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    @Column(name = "LOAN_TYPE_ID")
 	    private Integer loanTypeId;
-	    @Column(name = "LOAN_DESC")
-	    private String loanDesc;
+	    @Column(name = "LOAN_DESCRIPTION")
+	    private String loanDescription;
 	    @Column(name = "STATUS")
 	    private char status = 'A';
 	    @Temporal(TemporalType.TIMESTAMP)

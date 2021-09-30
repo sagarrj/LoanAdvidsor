@@ -48,9 +48,23 @@ public class Loan {
     private Date updateDttm;
     private Integer updatedBy;
     
+
     
    /* @OneToMany(mappedBy = "loan")
  
+=======
+
+   
+
+    
+    
+   /* @OneToMany(mappedBy = "loan")
+
+	
+    
+  
+
+>>>>>>> cf208cca6162a7c3cfe518188ac9e34eca4d641e
     /*@OneToMany(mappedBy = "loan")
 
     private Set<Sanction> sanctionSet = new HashSet<>();*/

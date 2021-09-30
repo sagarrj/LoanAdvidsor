@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.config.ApplicationException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.config.LoanConstants;
-import com.finance.LoanAdvisor.customer.VO.CustomerVO;
 import com.finance.LoanAdvisor.entities.Borrower;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
@@ -25,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -130,10 +129,17 @@ public class LoanService {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * This method converts List {@link loan} object into {@link LoanDTO} object
 	 * 
 	 * @param loans:{@link loan}
 	 * @return {@link LoanDTO}
+=======
+	 * This method converts List {@link Loan} object into {@link LoanVO} object
+	 * 
+	 * @param loans:{@link Loan}
+	 * @return {@link LoanVO}
+>>>>>>> cf208cca6162a7c3cfe518188ac9e34eca4d641e
 	 */
 	private List<LoanDTO> convertToLoanDTOList(List<Loan> loans) {
 		List<LoanDTO> loanDTO = new ArrayList<>();
@@ -146,6 +152,7 @@ public class LoanService {
 
 		return loanDTO;
 	}
+
 
 	private LoanDTO convertToLoanDTO(Loan loan) {
 //	      ObjectMapper mapper = new ObjectMapper();
@@ -173,9 +180,12 @@ public class LoanService {
 		LoanDTO loanDTO = new LoanDTO();
 		loanDTO.setLoanId(loan.getLoanId());
 		loanDTO.setLoanDesc(loan.getLoanDesc());
-		loanDTO.setLoanType(loan.getLoanType().getLoanDesc());
+		loanDTO.setLoanType(loan.getLoanType().getLoanDescription());
 		loanDTO.setROI(loan.getROI());
 		return loanDTO;
+
+	
+
 	}
 
 	public Double getEMI(Double rate, Integer tenure, Double principal) {

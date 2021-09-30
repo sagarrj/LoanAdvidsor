@@ -77,7 +77,7 @@ public class LoanServiceTest {
 		loan.setUpdateDttm(null);
 		loan.setUpdatedBy(null);
 		LoanType loanType = new LoanType();
-		loanType.setLoanDesc("HomeLoanDes");
+		loanType.setLoanDescription("HomeLoanDes");
 		loan.setLoanType(loanType);
 
 	}

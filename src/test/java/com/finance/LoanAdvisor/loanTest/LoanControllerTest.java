@@ -1,13 +1,10 @@
 package com.finance.LoanAdvisor.loanTest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.loan.LoanController;
+import com.finance.LoanAdvisor.loan.LoanService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +35,11 @@ import com.finance.LoanAdvisor.loan.LoanController;
 import com.finance.LoanAdvisor.loan.LoanService;
 import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
 /**
  * @author pkhedkar
  *
@@ -44,10 +50,13 @@ public class LoanControllerTest {
 
 	@MockBean
 	LoanService loanservice;
+	private Loan loan;
 	@Autowired
 	private MockMvc mockMvc;
+
 	private LoanDTO loanDTO;
-	private Loan loan;
+	
+
 
 	@BeforeEach
 	void initEmployeeObject() {
@@ -75,7 +84,7 @@ public class LoanControllerTest {
 	/**
 	 * This method tests status and {@link List} of {@link Loan} getAllLoan method
 	 * {@link LoanController}.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	
@@ -93,7 +102,7 @@ public class LoanControllerTest {
 
 	/**
 	 * This method check test status {@link Loan} on basis of id.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 
@@ -132,6 +141,7 @@ public class LoanControllerTest {
 	
 	}
 
+
 	
 	@Test
 	@DisplayName("Test Get Loan Not Found")
@@ -147,4 +157,21 @@ public class LoanControllerTest {
 		mockMvc.perform(get("/loan/view/"+loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
 								.andExpect(status().isNotFound());
 }
+
+//	@DisplayName("GET/geLoanByIdNotFound")
+//	@Test
+//	public void LoanByIdNotFound() throws Exception {
+////
+////		Mockito.when( loanservice.getLoan(1)).thenReturn(loanVO);
+////		mockMvc.perform(get("/loan/get/loan/" + loanVO.getLoanId().toString())
+////			     .contentType(MediaType.APPLICATION_JSON))
+////			     .andExpect(status().isNotFound());
+//
+//		Mockito.doThrow(new DataNotFoundException()).when(loanservice).getLoan(1);
+//		mockMvc.perform(get("/loan/get/loan/" + loanVO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
+//				.andExpect(status().isNotFound());
+//
+//	}
+
+
 }
