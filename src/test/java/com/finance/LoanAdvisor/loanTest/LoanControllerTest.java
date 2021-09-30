@@ -1,21 +1,31 @@
 package com.finance.LoanAdvisor.loanTest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.loan.LoanController;
+import com.finance.LoanAdvisor.loan.LoanService;
+import com.finance.LoanAdvisor.loan.VO.LoanVO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.customer.CustomerController;
-import com.finance.LoanAdvisor.entities.Customer;
-import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.entities.LoanType;
-import com.finance.LoanAdvisor.loan.LoanController;
-import com.finance.LoanAdvisor.loan.LoanService;
-import com.finance.LoanAdvisor.loan.VO.LoanVO;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author pkhedkar
@@ -31,7 +41,6 @@ public class LoanControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	private LoanVO loanVO;
-	private Loan loan;
 
 	@BeforeEach
 	void initEmployeeObject() {
