@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.loan.VO;
+package com.finance.LoanAdvisor.loan.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
