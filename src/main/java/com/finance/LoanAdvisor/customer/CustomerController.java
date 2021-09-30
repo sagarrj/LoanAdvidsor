@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
@@ -73,7 +73,7 @@ public class CustomerController {
 	 */
 	@GetMapping("/view/{id}")
 	public ResponseEntity<CustomerDTO> getCustomer(
-			@PathVariable("id") @NotNull(message = "Customer Id should not be empty")  @Min(value = 1, message = "Customer Id must be greater than or equal to 1") 
+			@PathVariable("id") @NotNull(message = "Customer Id should not be empty")  @Min(value = 1, message = "Customer Id must be greater than or equal to 1")
             @Max(value = 1000, message = "Customer Id must be lower than or equal to 1000") Integer customerId)
 			throws DataNotFoundException {
 		logger.info("Customer returned from controller");
@@ -104,7 +104,7 @@ public class CustomerController {
 	/**
 	 * This gets data from table and return an object of {@link SanctionDTO}
 	 * containing all arguments which has been saved {@link Sanction} Object.
-	 * 
+	 *
 	 * @return {@link ResponseEntity} of {@link SanctionDTO}
 	 */
 	@GetMapping("/sanction/{customerId}/{loanId}")
