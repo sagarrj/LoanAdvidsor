@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.customer.VO;
+package com.finance.LoanAdvisor.customer.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class CustomerVO {
+public class CustomerDTO {
 
     private Integer customerId;
     private String firstName;

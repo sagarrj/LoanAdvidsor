@@ -2,6 +2,7 @@ package com.finance.LoanAdvisor.customer;
 
 import java.util.ArrayList;
 
+
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.customer.VO.CustomerVO;
+import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 
@@ -35,10 +36,10 @@ public class CustomerService {
 	 * {@link Customer} containing all arguments which has been saved.
 	 * 
 	 * @param customer: {@link Customer}
-	 * @return customerVO :{@link CustomerVO}
+	 * @return customerVO :{@link CustomerDTO}
 	 * @throws DataNotFoundException
 	 */
-	public CustomerVO addCustomer(Customer customer) throws DataNotFoundException {
+	public CustomerDTO addCustomer(Customer customer) throws DataNotFoundException {
 		if (customerRepository.findByEmail(customer.getEmail()) != null) {
 			logger.warn("Customer is already created");
 			throw new DataNotFoundException("Customer is already created");
@@ -47,69 +48,71 @@ public class CustomerService {
 		customer.setCreateDttm(new Date());
 		customer.setCreatedBy(DEFAULT_ID);
 		customerRepository.save(customer);
-		CustomerVO customerVO = convertToCustomerVO(customer);
+		CustomerDTO customerDTO = convertToCustomerDTO(customer);
 		logger.info("Customer added");
-		return customerVO;
+		return customerDTO;
 	}
 
 	/**
 	 * This method accepts customer Id and returns customer details based on Id.
 	 * 
 	 * @param customerId
-	 * @return customerVO :{@link CustomerVO}
+	 * @return customerVO :{@link CustomerDTO}
 	 * @throws DataNotFoundException
 	 */
-	public CustomerVO getCustomer(Integer customerId) throws DataNotFoundException {
+	public CustomerDTO getCustomer(Integer customerId) throws DataNotFoundException {
 		Customer customer = customerRepository.findById(customerId).orElse(null);
 		if (customer == null) {
 			logger.warn("Customer not found");
 			throw new DataNotFoundException("Customer not found");
 		}
-		CustomerVO customerVO = convertToCustomerVO(customer);
+		CustomerDTO customerDTO = convertToCustomerDTO(customer);
 		logger.info("Customer returned from service");
-		return customerVO;
+		return customerDTO;
 	}
 
 	/**
 	 * This method returns list of all available customers
 	 * 
-	 * @return {@link List} of {@link CustomerVO}
+	 * @return {@link List} of {@link CustomerDTO}
 	 * @throws DataNotFoundException
 	 */
-	public List<CustomerVO> getAllCustomers() throws DataNotFoundException {
+	public List<CustomerDTO> getAllCustomers() throws DataNotFoundException {
 		List<Customer> customers = customerRepository.findAllByStatus(STATUS);
 		if (customers.isEmpty()) {
 			logger.warn("List is empty");
 			throw new DataNotFoundException("List is empty");
 		}
-		List<CustomerVO> customerVOList = convertToCustomerVOList(customers);
+		List<CustomerDTO> customerDTOList = convertToCustomerDTOList(customers);
 		logger.info("List of customers from service");
-		return customerVOList;
+		return customerDTOList;
 	}
 
 	/**
-	 * This method converts List {@link Customer} object into {@link CustomerVO} object
+	 * This method converts List {@link Customer} object into {@link CustomerDTO} object
 	 * 
 	 * @param customers : {@link Customer}
-	 * @return customerVOList: {@link List} of {@link CustomerVO}
+	 * @return customerVOList: {@link List} of {@link CustomerDTO}
 	 */
-	public List<CustomerVO> convertToCustomerVOList(List<Customer> customerList) {
-		List<CustomerVO> customerVOList = new ArrayList<>();
+	public List<CustomerDTO> convertToCustomerDTOList(List<Customer> customerList) {
+		List<CustomerDTO> customerDTOList = new ArrayList<>();
 		for (Customer customer : customerList) {
-			customerVOList.add(convertToCustomerVO(customer));
+			customerDTOList.add(convertToCustomerDTO(customer));
 		}
-		return customerVOList;
+		return customerDTOList;
 	}
 
-	public CustomerVO convertToCustomerVO(Customer customer) {
-		CustomerVO customerVO = new CustomerVO();
-		customerVO.setCustomerId(customer.getCustomerId());
-		customerVO.setFirstName(customer.getFirstName());
-		customerVO.setLastName(customer.getLastName());
-		customerVO.setEmail(customer.getEmail());
-		customerVO.setAge(customer.getAge());
-		customerVO.setCreditScore(customer.getCreditScore());
-		customerVO.setIncome(customer.getIncome());
-		return customerVO;
+	public CustomerDTO convertToCustomerDTO(Customer customer) {
+		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(customer.getCustomerId());
+		customerDTO.setFirstName(customer.getFirstName());
+		customerDTO.setLastName(customer.getLastName());
+		customerDTO.setEmail(customer.getEmail());
+		customerDTO.setAge(customer.getAge());
+		customerDTO.setCreditScore(customer.getCreditScore());
+		customerDTO.setIncome(customer.getIncome());
+		return customerDTO;
 	}
+	
+	
 }

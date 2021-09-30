@@ -2,11 +2,16 @@ package com.finance.LoanAdvisor.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
 import java.util.Date;
 
 /**
@@ -26,60 +31,65 @@ public class Customer {
     @Setter
     private Integer customerId;
     
+	@NotEmpty(message = "First name should not be empty")
+	@Pattern(regexp = "[A-Z]{1}[a-z]*",message="First Name should start with capital")
+	private String firstName;
     
-    private String firstName;
-    
-   
+	@NotEmpty(message = "Last name should not be empty")
+	@Pattern(regexp = "[A-Z]{1}[a-z]*", message = "Last Name should start with capital")
     private String lastName;
     
-    
+	@NotEmpty(message = "City should not be empty")
+	@Pattern(regexp = "[A-Z]{1}[a-z]*", message = "City Name should start with capital")
     private String city;
     
-   
+	@NotEmpty(message = "Gender should not be empty")
+	@Pattern(regexp = "Male|Female|Other", message = "Invalid Gender")
     private String gender;
     
-   
+	@NotEmpty(message = "Email should not be empty")
+	@Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$", message = "Invalid Email")
     private String email;
     
-    
+	@NotNull(message = "Age should not be empty")
+	//@Pattern(regexp = "", message = "Invalid Age")
     private Integer age;
-    
-    
+	
+	@NotEmpty(message = "Phone Number should not be empty")
+	@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Invalid Phone number")
     private String phoneNo;
     
-   
+	@NotNull(message = "Income should not be empty")
+	//@Pattern(regexp = "", message = "Invalid Income")
     private Integer income;
     
-    
+	@NotEmpty(message = "Aadhar Number should not be empty")
+	@Pattern(regexp = "^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$", message = "Invalid Aadhar number")
     private String aadharNo;
     
-    
+	@NotEmpty(message = "Pan Number should not be empty")
+	@Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "Invalid Pan number")
     private String panNo;
     
-    
+	@NotNull(message = " Credit Score should not be empty")
+	//@Pattern(regexp = "", message = "Invalid Credit Score")
     private Integer creditScore;
     
-    
+	@NotNull(message = "Initial Amount should not be empty")
+	//@Pattern(regexp = "", message = "Invalid Initial Amount")
     private Integer initialAmount;
     
-    
-    private Integer loanRequirement;
-    
-    
-    private char status = 'A';
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    
-    private Date createDttm;
+	@NotNull(message = "Loan Requirement should not be empty")
+	//@Pattern(regexp = "", message = "Invalid Loan requirement ")
+	private Integer loanRequirement;
     
     
+    private char status = 'A';   
+    @Temporal(TemporalType.TIMESTAMP)   
+    private Date createDttm;   
     private Integer createdBy;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    
+    @Temporal(TemporalType.TIMESTAMP)   
     private Date updateDttm;
-    
-  
     private Integer updatedBy;
 
 }
