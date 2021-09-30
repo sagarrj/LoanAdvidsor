@@ -147,7 +147,7 @@ public class LoanServiceTest {
 		Throwable exception = assertThrows(DataNotFoundException.class, () -> {
 			loanService.getLoan(1);
 		});
-		Assertions.assertEquals(LoanConstants.LIST_IS_EMPTY, exception.getMessage());
+		Assertions.assertEquals(LoanConstants.LOAN_NOT_FOUND, exception.getMessage());
 	}
 
 	@BeforeEach

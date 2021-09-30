@@ -1,5 +1,12 @@
 package com.finance.LoanAdvisor.config;
 
+
+
+/**
+ * @author pkhedkar
+ * In this class we set  strings to constants
+ *
+ */
 public interface LoanConstants
 {
     public static final Integer MAX_AGE = 60;

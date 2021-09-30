@@ -22,12 +22,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.mockito.Mockito.doReturn;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.customer.CustomerController;
+import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.LoanType;
@@ -82,7 +83,7 @@ public class LoanControllerTest {
 	}
 
 	/**
-	 * This method tests status and {@link List} of {@link Loan} getAllLoan method
+	 * This method tests status and {@link List} of {@link Loan} test cgetAllLoan method
 	 * {@link LoanController}.
 	 *
 	 * @throws Exception
@@ -93,11 +94,27 @@ public class LoanControllerTest {
 	public void testGetAllLoan() throws Exception  {
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
 		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
-		//listLoanDTO.add(new loan
 		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
 		String url = "/loan/list";
 		mockMvc.perform(get(url)).andExpect(status().isOk());
 		
+	}
+	
+	/**
+	 * This method tests status and {@link List} of {@link Loan} testGetAllLoanNotFound method
+	 * @throws Exception
+	 */
+	@Test
+	@DisplayName("Test Get AllLoan Not Found")
+	public void testGetAllLoanNotFound() throws Exception 
+	{
+		List<LoanDTO> listLoanDTO = new ArrayList<>();
+		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
+		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
+			mockMvc.perform(
+					get("/loan/list" +loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
+					.andExpect(status().isNotFound());
+	
 	}
 
 	/**
@@ -128,50 +145,17 @@ public class LoanControllerTest {
 		return objectMapper.writeValueAsString(object);
 	}
 
-	@Test
-	@DisplayName("Test Get AllLoan Not Found")
-	public void testGetAllLoanNotFound() throws Exception {
-		List<LoanDTO> listLoanDTO = new ArrayList<>();
-		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
-		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
-		
-			mockMvc.perform(
-					get("/loan/list" +loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isNotFound());
 	
-	}
 
-
-	
 	@Test
 	@DisplayName("Test Get Loan Not Found")
 	public void testGetLoanNotFound() throws Exception  {
-		//Mockito.when(loanservice.getLoan(1)).thenReturn(500);
-		Mockito.when(loanservice.getLoan(1)).thenReturn(loanDTO);
-		String url = "/loan/view/1";
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_JSON);
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		String inputJson = this.mapToJson(loanDTO);
-		String outputJson = result.getResponse().getContentAsString();
-		assertThat(outputJson).isEqualTo(inputJson);
-		mockMvc.perform(get("/loan/view/"+loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
-								.andExpect(status().isNotFound());
+		LoanDTO loanDTO = new LoanDTO ();
+		doReturn(loanDTO).when(loanservice).getLoan(1);
+		 mockMvc.perform(get("/loan/view/{id}",10))
+	        .andExpect(status().isNotFound());
 }
 
-//	@DisplayName("GET/geLoanByIdNotFound")
-//	@Test
-//	public void LoanByIdNotFound() throws Exception {
-////
-////		Mockito.when( loanservice.getLoan(1)).thenReturn(loanVO);
-////		mockMvc.perform(get("/loan/get/loan/" + loanVO.getLoanId().toString())
-////			     .contentType(MediaType.APPLICATION_JSON))
-////			     .andExpect(status().isNotFound());
-//
-//		Mockito.doThrow(new DataNotFoundException()).when(loanservice).getLoan(1);
-//		mockMvc.perform(get("/loan/get/loan/" + loanVO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
-//				.andExpect(status().isNotFound());
-//
-//	}
 
 
 }

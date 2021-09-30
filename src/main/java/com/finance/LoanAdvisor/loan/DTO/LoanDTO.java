@@ -14,8 +14,6 @@ public class LoanDTO {
     private Double ROI;
     private String loanType;
 
-    
-
-
+  
 
 }
