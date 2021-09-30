@@ -43,7 +43,7 @@ public class CustomerController {
 	 * 
 	 * @return {@link List} of {@link CustomerDTO}
 	 *
-	 * @return {@link List} of {@link CustomerVO}
+	 * @return {@link List} of {@link CustomerDTO}
 	 *
 	 */
 	@GetMapping("/list")
