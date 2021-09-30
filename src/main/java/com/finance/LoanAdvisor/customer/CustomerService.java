@@ -3,7 +3,6 @@ package com.finance.LoanAdvisor.customer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -12,21 +11,25 @@ import com.finance.LoanAdvisor.entities.Sanction;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+
 import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.config.CustomerNotEligibleException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
+import com.finance.LoanAdvisor.config.ValidationException;
 import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanTypeRepository;
-
 
 /**
  * @author priypawa
@@ -35,6 +38,15 @@ import com.finance.LoanAdvisor.entities.repository.LoanTypeRepository;
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
+
+	@Autowired
+	ModelMapper modelMapper;
+
+	private static final String LIST_IS_EMPTY = "List is empty";
+
+	private static final String CUSTOMER_NOT_FOUND = "Customer not found";
+
+	private static final String CUSTOMER_IS_ALREADY_CREATED = "Customer is already created";
 
 	private static final int DEFAULT_ID = 0;
 
@@ -56,15 +68,19 @@ public class CustomerService {
 	 * @return customerVO :{@link CustomerDTO}
 	 * @throws DataNotFoundException
 	 */
-	public CustomerDTO addCustomer(Customer customer) throws DataNotFoundException {
+	public CustomerDTO addCustomer(Customer customer) throws DataNotFoundException, ValidationException {
 		if (customerRepository.findByEmail(customer.getEmail()) != null) {
-			logger.warn("Customer is already created");
-			throw new DataNotFoundException("Customer is already created");
+			logger.warn(CUSTOMER_IS_ALREADY_CREATED);
+			throw new DataNotFoundException(CUSTOMER_IS_ALREADY_CREATED);
 		}
-		customer.setStatus(STATUS);
-		customer.setCreateDttm(new Date());
-		customer.setCreatedBy(DEFAULT_ID);
-		customerRepository.save(customer);
+		if (validateCustomerData(customer)) {
+			customer.setCreditScore((int) (Math.random() * 100));
+			customer.setStatus(STATUS);
+			customer.setCreateDttm(new Date());
+			customer.setCreatedBy(DEFAULT_ID);
+			customerRepository.save(customer);
+		}
+
 		CustomerDTO customerDTO = convertToCustomerDTO(customer);
 		logger.info("Customer added");
 		return customerDTO;
@@ -77,11 +93,11 @@ public class CustomerService {
 	 * @return customerVO :{@link CustomerDTO}
 	 * @throws DataNotFoundException
 	 */
-	public CustomerDTO getCustomer(Integer customerId) throws DataNotFoundException {
+	public CustomerDTO getCustomer(Integer customerId) throws DataNotFoundException, ValidationException {
 		Customer customer = customerRepository.findById(customerId).orElse(null);
 		if (customer == null) {
-			logger.warn("Customer not found");
-			throw new DataNotFoundException("Customer not found");
+			logger.warn(CUSTOMER_NOT_FOUND);
+			throw new DataNotFoundException(CUSTOMER_NOT_FOUND);
 		}
 		CustomerDTO customerDTO = convertToCustomerDTO(customer);
 		logger.info("Customer returned from service");
@@ -90,17 +106,16 @@ public class CustomerService {
 
 	/**
 	 * This method returns list of all available customers
-	 * 
-	 * @return {@link List} of {@link CustomerDTO}
 	 *
 	 * @return {@link List} of {@link CustomerDTO}
+	 *
 	 * @throws DataNotFoundException
 	 */
 	public List<CustomerDTO> getAllCustomers() throws DataNotFoundException {
 		List<Customer> customers = customerRepository.findAllByStatus(STATUS);
 		if (customers.isEmpty()) {
-			logger.warn("List is empty");
-			throw new DataNotFoundException("List is empty");
+			logger.warn(LIST_IS_EMPTY);
+			throw new DataNotFoundException(LIST_IS_EMPTY);
 		}
 		List<CustomerDTO> customerDTOList = convertToCustomerDTOList(customers);
 		logger.info("List of customers from service");
@@ -108,33 +123,136 @@ public class CustomerService {
 	}
 
 	/**
-	 * This method converts List {@link Customer} object into {@link CustomerDTO} object
-	 * 
+
+	 * This method converts List {@link Customer} into {@link List} of
+
+	 * {@link CustomerDTO}
+
 	 * @param customerList : {@link Customer}
+
 	 * @return customerVOList: {@link List} of {@link CustomerDTO}
-	 * This method converts List {@link Customer} object into {@link CustomerDTO} object
-	 *
-	 * @param : {@link Customer}
-	 * @return customerVOList: {@link List} of {@link CustomerDTO}
+
 	 */
+
 	public List<CustomerDTO> convertToCustomerDTOList(List<Customer> customerList) {
+
 		List<CustomerDTO> customerDTOList = new ArrayList<>();
+
 		for (Customer customer : customerList) {
+
 			customerDTOList.add(convertToCustomerDTO(customer));
+
 		}
+
 		return customerDTOList;
+
 	}
 
+
+
+	/**
+
+	 * This method maps properties of {@link Customer} object to {@link CustomerDTO}
+
+	 * object using {@link ModelMapper}
+
+	 *
+
+	 * @param customer : {@link Customer}
+
+	 * @return customerDTO : {@link CustomerDTO}
+
+	 */
+
 	public CustomerDTO convertToCustomerDTO(Customer customer) {
+
 		CustomerDTO customerDTO = new CustomerDTO();
-		customerDTO.setCustomerId(customer.getCustomerId());
-		customerDTO.setFirstName(customer.getFirstName());
-		customerDTO.setLastName(customer.getLastName());
-		customerDTO.setEmail(customer.getEmail());
-		customerDTO.setAge(customer.getAge());
-		customerDTO.setCreditScore(customer.getCreditScore());
-		customerDTO.setIncome(customer.getIncome());
+
+		ModelMapper modelMapper = new ModelMapper();
+
+		modelMapper.addMappings(new PropertyMap<Customer, CustomerDTO>() {
+
+			protected void configure() {
+
+			}
+
+		});
+
+		modelMapper.map(customer, customerDTO);
 		return customerDTO;
+
+	}
+
+	/**
+
+	 * This method validates customer data such as age, income, loan amount, initial
+
+	 * requirement based on given conditions
+
+	 *
+
+	 * @param customer : {@link Customer}
+
+	 * @return flag : {@link Boolean}
+
+	 * @throws ValidationException
+
+	 */
+
+	public boolean validateCustomerData(Customer customer) throws ValidationException {
+
+		boolean flag = false;
+
+		if ((customer.getAge() >= 18 && customer.getAge() <= 60)) {
+
+			flag = true;
+
+		} else {
+
+			flag = false;
+
+			throw new ValidationException("Age must be between 18 to 60");
+
+		}
+
+		if (customer.getLoanRequirement() <= 10000000) {
+
+			flag = true;
+
+		} else {
+
+			flag = false;
+
+			throw new ValidationException("Loan requirement must be lower than or equal to 1000000");
+
+		}
+
+		if (customer.getInitialAmount() < customer.getLoanRequirement()) {
+
+			flag = true;
+
+		} else {
+
+			flag = false;
+
+			throw new ValidationException("Initial amount should be less than loan requirement");
+
+		}
+
+		if (customer.getIncome() < 10000000) {
+
+			flag = true;
+
+		} else {
+
+			flag = false;
+
+			throw new ValidationException("Income should be less than 10000000");
+
+		}
+
+		return flag;
+
 	}
 
 	/**
@@ -142,7 +260,6 @@ public class CustomerService {
 	 * LoanAmount, ROI, LoanDescription
 	 * @throws CustomerNotEligibleException
 	 */
-
 	public SanctionDTO customerLoanEligibility(int customerId, int loanId) {
 		if (customerId < 1 && loanId < 1) {
 			throw new DataNotFoundException("CustomerId and LoanId should not be less then one");
@@ -195,7 +312,7 @@ public class CustomerService {
 			}
 			else {
 				throw new CustomerNotEligibleException("Customer is not eligible for loan");
-		}
+			}
 			sanction.setROI(roi);
 			if(customer.getGender().equalsIgnoreCase("Female")&& customer.getAge()<40){
 				sanction.setROI(sanction.getROI()- 0.05);
@@ -210,13 +327,13 @@ public class CustomerService {
 			}else if(loanRequirement > maxLoanAmount){
 				throw new CustomerNotEligibleException("Customer is not eligible for loan");
 			}
-				sanction.setCustomer(customer);
-				sanction.setLoan(loan);
-				sanction.setCreateDttm(new Date());
-				sanction.setStatus('A');
-				sanctionRepository.save(sanction);
-				SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
-				return sanctionVO;
+			sanction.setCustomer(customer);
+			sanction.setLoan(loan);
+			sanction.setCreateDttm(new Date());
+			sanction.setStatus('A');
+			sanctionRepository.save(sanction);
+			SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
+			return sanctionVO;
 
 		}
 	}

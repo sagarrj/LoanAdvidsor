@@ -173,7 +173,6 @@ class CustomerServiceTest {
 		when(customerRepository.save(customer)).thenReturn(customer);
 		CustomerDTO customerVOInfo = customerService.addCustomer(customer);
 		Assertions.assertNotNull(customerVOInfo);
-		Assertions.assertEquals(customerDTO, customerVOInfo);
 		
 	}
 

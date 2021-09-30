@@ -1,9 +1,7 @@
 package com.finance.LoanAdvisor.loan;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.config.ApplicationException;
+import com.finance.LoanAdvisor.config.BadRequestException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.Borrower;
 import com.finance.LoanAdvisor.entities.Customer;
@@ -16,20 +14,36 @@ import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
 import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
-
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import static com.finance.LoanAdvisor.config.LoanConstants.*;
 
+/**
+ * @author pkhedkar
+ *
+ */
+/**
+ * @author pkhedkar
+ *
+ */
+/**
+ * @author pkhedkar
+ *
+ */
+/**
+ * @author pkhedkar
+ *
+ */
 /**
  * @author pkhedkar
  *
@@ -37,6 +51,9 @@ import static com.finance.LoanAdvisor.config.LoanConstants.*;
 @Service
 @RequiredArgsConstructor
 public class LoanService {
+
+	@Autowired
+	ModelMapper modelMapper;
 
 	Logger logger = LoggerFactory.getLogger(LoanController.class);
 
@@ -47,6 +64,16 @@ public class LoanService {
 
 	public RegisterResponse registerCustomerForLoan(RegisterRequest registerRequest) {
 
+		if(registerRequest.getCustomerId() < 1 || registerRequest.getSanctionId() <1 ){
+			throw new ApplicationException(INVALID_INPUT);
+		}
+
+		List<Borrower> borrowers = borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(registerRequest.getCustomerId(),
+				registerRequest.getSanctionId());
+		if(!borrowers.isEmpty()){
+			throw new ApplicationException(CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN);
+		}
+
 		Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
 		Optional<Sanction> optionalSanction = sanctionRepository.findById(registerRequest.getSanctionId());
 		if (optionalCustomer.isPresent() && optionalSanction.isPresent()) {
@@ -55,9 +82,11 @@ public class LoanService {
 
 			Integer maxTenure = MAX_AGE - customer.getAge();
 			if (maxTenure < 1) {
-				throw new ApplicationException(
-						CANNOT_PROVIDE_LOAN_FOR_SUCH_SMALL_DURATION + maxTenure + " Max age is " + MAX_AGE);
+				throw new ApplicationException(CANNOT_PROVIDE_LOAN_AFTER + MAX_AGE);
+			}else if(maxTenure <= 1){
+				throw new ApplicationException(CANNOT_PROVIDE_LOAN_FOR_SUCH_SMALL_DURATION + maxTenure);
 			}
+
 			Integer tenure = registerRequest.getPreferredTenure() < maxTenure ? registerRequest.getPreferredTenure()
 					: maxTenure;
 			Double emi = getEMI(sanction.getROI(), tenure, sanction.getLoanAmount());
@@ -84,28 +113,27 @@ public class LoanService {
 
 	/**
 	 * This method accepts loan Id and returns loan details based on Id
+	 *
 	 * @param id:{@link Integer}
 	 * @return {@link LoanDTO}
 	 * @throws DataNotFoundException
 	 */
-	public LoanDTO getLoan(int id) throws DataNotFoundException {
+	public LoanDTO getLoan(int id) throws DataNotFoundException, BadRequestException {
 
 		Optional<Loan> optionalLoan = loanRepository.findById(id);
 //Optional.ofNullable(optionalLoan)!=null
-	
-		if (!optionalLoan.isPresent()||Optional.ofNullable(optionalLoan)==null)
-		{
+
+		if (!optionalLoan.isPresent() || optionalLoan == null) {
+
 			logger.warn("Loan not found");
 			throw new DataNotFoundException(LOAN_NOT_FOUND);
 		}
-		
+
 		Loan loan = optionalLoan.get();
 		logger.info("Loan returned from service");
-		LoanDTO loanVOS = convertToLoanDTO(loan);
-		return loanVOS;
-		
-		
-		
+		LoanDTO loanDTO = convertToLoanDTO(loan);
+		return loanDTO;
+
 	}
 
 	/**
@@ -116,75 +144,47 @@ public class LoanService {
 	 */
 	public List<LoanDTO> getAllLoan() throws DataNotFoundException {
 
-		List<Loan> loans = loanRepository.findAllByStatus(ACTIVE);
-		if (loans.isEmpty()) {
+		List<Loan> loanList = loanRepository.findAllByStatus(ACTIVE);
+		if (loanList.isEmpty()) {
 			logger.warn("List is empty");
 			throw new DataNotFoundException(LIST_IS_EMPTY);
 		}
 		logger.info("List of Loans from service");
-		List<LoanDTO> loanDTO = convertToLoanDTOList(loans);
-		return loanDTO;
-		
+		List<LoanDTO> loanDTOList = convertToLoanDTOList(loanList);
+		return loanDTOList;
 
 	}
 
 	/**
-<<<<<<< HEAD
-	 * This method converts List {@link loan} object into {@link LoanDTO} object
-	 * 
-	 * @param loans:{@link loan}
-	 * @return {@link LoanDTO}
-=======
-	 * This method converts List {@link Loan} object into {@link LoanVO} object
-	 * 
+	 *
+	 * This method converts List {@link Loan} object into {@link LoanDTO} object
+	 *
 	 * @param loans:{@link Loan}
-	 * @return {@link LoanVO}
->>>>>>> cf208cca6162a7c3cfe518188ac9e34eca4d641e
+	 * @return {@link LoanDTO}
+	 *
 	 */
 	private List<LoanDTO> convertToLoanDTOList(List<Loan> loans) {
-		List<LoanDTO> loanDTO = new ArrayList<>();
+		List<LoanDTO> loanDTOList = new ArrayList<>();
 
-		LoanDTO loanDTOS = new LoanDTO();
 		for (Loan loan : loans) {
 
-			loanDTO.add(convertToLoanDTO(loan));
+			loanDTOList.add(convertToLoanDTO(loan));
 		}
 
-		return loanDTO;
+		return loanDTOList;
 	}
 
-
+	/**
+	 * This method contain {@link Loan} of boject into {@link LoanDTO} This method
+	 * contain model mapper
+	 *
+	 * @param loan
+	 * @return
+	 */
 	private LoanDTO convertToLoanDTO(Loan loan) {
-//	      ObjectMapper mapper = new ObjectMapper();
-//	      LoanDTO loanDTO= new LoanDTO();
-//	      loanDTO.setLoanId(loan.getLoanId());
-//	      loanDTO.setLoanDesc(loan.getLoanDesc());
-//	      loanDTO.setLoanType(loan.getLoanType().getLoanDesc());
-//	      loanDTO.setROI(loan.getROI());
-//	      //map json to student
-//	      try{
-//	    	   LoanDTO loanDTOS = mapper.readValues(loanDTO, LoanDTO.class);
-//	         
-//	       //  System.out.println(loanDTOs);
-//	         
-//	         loanDTO = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(loanDTO);
-//	         
-//	      return loanDTOS;
-//	      }
-//	      catch (JsonParseException e) { e.printStackTrace();}
-//	      catch (JsonMappingException e) { e.printStackTrace(); }
-//	      catch (IOException e) { e.printStackTrace(); }
-//	      
-	      
-	      
-		LoanDTO loanDTO = new LoanDTO();
-		loanDTO.setLoanId(loan.getLoanId());
-		loanDTO.setLoanDesc(loan.getLoanDesc());
+		LoanDTO loanDTO = modelMapper.map(loan, LoanDTO.class);
 		loanDTO.setLoanType(loan.getLoanType().getLoanDescription());
-		loanDTO.setROI(loan.getROI());
 		return loanDTO;
-
-	
 
 	}
 

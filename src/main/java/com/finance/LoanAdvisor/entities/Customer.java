@@ -60,7 +60,6 @@ public class Customer {
     private String phoneNo;
     
 	@NotNull(message = "Income should not be empty")
-	//@Pattern(regexp = "", message = "Invalid Income")
     private Integer income;
     
 	@NotEmpty(message = "Aadhar Number should not be empty")
@@ -71,16 +70,12 @@ public class Customer {
 	@Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "Invalid Pan number")
     private String panNo;
     
-	@NotNull(message = " Credit Score should not be empty")
-	//@Pattern(regexp = "", message = "Invalid Credit Score")
     private Integer creditScore;
     
 	@NotNull(message = "Initial Amount should not be empty")
-	//@Pattern(regexp = "", message = "Invalid Initial Amount")
     private Integer initialAmount;
     
 	@NotNull(message = "Loan Requirement should not be empty")
-	//@Pattern(regexp = "", message = "Invalid Loan requirement ")
 	private Integer loanRequirement;
     
     
