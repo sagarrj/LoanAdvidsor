@@ -1,8 +1,5 @@
 package com.finance.LoanAdvisor.loan;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.config.ApplicationException;
 import com.finance.LoanAdvisor.config.BadRequestException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
@@ -17,21 +14,18 @@ import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
 import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
 import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
-
 import lombok.RequiredArgsConstructor;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import static com.finance.LoanAdvisor.config.LoanConstants.*;
 
 /**
@@ -70,6 +64,16 @@ public class LoanService {
 
 	public RegisterResponse registerCustomerForLoan(RegisterRequest registerRequest) {
 
+		if(registerRequest.getCustomerId() < 1 || registerRequest.getSanctionId() <1 ){
+			throw new ApplicationException(INVALID_INPUT);
+		}
+
+		List<Borrower> borrowers = borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(registerRequest.getCustomerId(),
+				registerRequest.getSanctionId());
+		if(!borrowers.isEmpty()){
+			throw new ApplicationException(CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN);
+		}
+
 		Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
 		Optional<Sanction> optionalSanction = sanctionRepository.findById(registerRequest.getSanctionId());
 		if (optionalCustomer.isPresent() && optionalSanction.isPresent()) {
@@ -78,9 +82,11 @@ public class LoanService {
 
 			Integer maxTenure = MAX_AGE - customer.getAge();
 			if (maxTenure < 1) {
-				throw new ApplicationException(
-						CANNOT_PROVIDE_LOAN_FOR_SUCH_SMALL_DURATION + maxTenure + " Max age is " + MAX_AGE);
+				throw new ApplicationException(CANNOT_PROVIDE_LOAN_AFTER + MAX_AGE);
+			}else if(maxTenure <= 1){
+				throw new ApplicationException(CANNOT_PROVIDE_LOAN_FOR_SUCH_SMALL_DURATION + maxTenure);
 			}
+
 			Integer tenure = registerRequest.getPreferredTenure() < maxTenure ? registerRequest.getPreferredTenure()
 					: maxTenure;
 			Double emi = getEMI(sanction.getROI(), tenure, sanction.getLoanAmount());
@@ -107,7 +113,7 @@ public class LoanService {
 
 	/**
 	 * This method accepts loan Id and returns loan details based on Id
-	 * 
+	 *
 	 * @param id:{@link Integer}
 	 * @return {@link LoanDTO}
 	 * @throws DataNotFoundException
@@ -150,12 +156,12 @@ public class LoanService {
 	}
 
 	/**
-	 * 
-	 * This method converts List {@link loan} object into {@link LoanDTO} object
-	 * 
-	 * @param loans:{@link loan}
+	 *
+	 * This method converts List {@link Loan} object into {@link LoanDTO} object
+	 *
+	 * @param loans:{@link Loan}
 	 * @return {@link LoanDTO}
-	 * 
+	 *
 	 */
 	private List<LoanDTO> convertToLoanDTOList(List<Loan> loans) {
 		List<LoanDTO> loanDTOList = new ArrayList<>();
@@ -171,7 +177,7 @@ public class LoanService {
 	/**
 	 * This method contain {@link Loan} of boject into {@link LoanDTO} This method
 	 * contain model mapper
-	 * 
+	 *
 	 * @param loan
 	 * @return
 	 */

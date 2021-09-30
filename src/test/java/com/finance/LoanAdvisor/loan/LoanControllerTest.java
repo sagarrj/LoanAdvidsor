@@ -3,9 +3,7 @@ package com.finance.LoanAdvisor.loan;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.loan.LoanController;
-import com.finance.LoanAdvisor.loan.LoanService;
-
+import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,30 +13,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.customer.CustomerController;
-import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
-import com.finance.LoanAdvisor.entities.Customer;
-import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.entities.LoanType;
-import com.finance.LoanAdvisor.loan.LoanController;
-import com.finance.LoanAdvisor.loan.LoanService;
-import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 /**
@@ -47,6 +35,7 @@ import java.util.List;
  */
 @AutoConfigureMockMvc
 @SpringBootTest
+@WithMockUser(username="admin")
 public class LoanControllerTest {
 
 	@MockBean
@@ -83,7 +72,7 @@ public class LoanControllerTest {
 	}
 
 	/**
-	 * This method tests status and {@link List} of {@link Loan} test cgetAllLoan method
+	 * This method tests status and {@link List} of {@link Loan} getAllLoan method
 	 * {@link LoanController}.
 	 *
 	 * @throws Exception
@@ -99,14 +88,14 @@ public class LoanControllerTest {
 		mockMvc.perform(get(url)).andExpect(status().isOk());
 		
 	}
-	
+
 	/**
 	 * This method tests status and {@link List} of {@link Loan} testGetAllLoanNotFound method
 	 * @throws Exception
 	 */
 	@Test
 	@DisplayName("Test Get AllLoan Not Found")
-	public void testGetAllLoanNotFound() throws Exception 
+	public void testGetAllLoanNotFound() throws Exception
 	{
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
 		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
@@ -114,7 +103,7 @@ public class LoanControllerTest {
 			mockMvc.perform(
 					get("/loan/list" +loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isNotFound());
-	
+
 	}
 
 	/**
@@ -145,7 +134,7 @@ public class LoanControllerTest {
 		return objectMapper.writeValueAsString(object);
 	}
 
-	
+
 
 	@Test
 	@DisplayName("Test Get Loan Not Found")

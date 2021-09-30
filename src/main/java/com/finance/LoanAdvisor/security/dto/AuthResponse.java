@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.security.VO;
+package com.finance.LoanAdvisor.security.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;

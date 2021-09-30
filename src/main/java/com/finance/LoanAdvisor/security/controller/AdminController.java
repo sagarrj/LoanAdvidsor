@@ -2,7 +2,7 @@ package com.finance.LoanAdvisor.security.controller;
 
 import com.finance.LoanAdvisor.entities.User;
 import com.finance.LoanAdvisor.security.JwtUtil;
-import com.finance.LoanAdvisor.security.VO.AuthResponse;
+import com.finance.LoanAdvisor.security.dto.AuthResponse;
 import com.finance.LoanAdvisor.security.service.AdminService;
 import com.finance.LoanAdvisor.security.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;

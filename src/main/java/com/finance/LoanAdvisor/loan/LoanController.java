@@ -2,12 +2,9 @@ package com.finance.LoanAdvisor.loan;
 
 import com.finance.LoanAdvisor.config.BadRequestException;
 import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.config.LoanConstants;
-import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
 import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
-
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author pkhedkar
@@ -35,18 +31,14 @@ public class LoanController {
 	 * @param registerRequest
 	 * @return
 	 */
-	@PostMapping("/register")
-	public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
-
-//	@GetMapping("/register")
-//	public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
-
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest){
 		RegisterResponse registerResponse = loanService.registerCustomerForLoan(registerRequest);
 		return new ResponseEntity<RegisterResponse>(registerResponse, HttpStatus.OK);
 	}
 
 	/**
-	 * 
+	 *
 	 * This method accepts loan Id and returns loan details based on Id.
 	 *
 	 * @param id : {@link Integer}
@@ -64,10 +56,8 @@ public class LoanController {
 
 	/**
 	 * This method returns list of available loans
-	 * 
+	 *
 	 * @return {@link List} of {@link LoanDTO}
-	 * @return {@link List} of {@link LoanVO}
-	 * 
 	 */
 	@GetMapping(value = "/list")
 	public ResponseEntity<List<LoanDTO>> getAllLoans() {
