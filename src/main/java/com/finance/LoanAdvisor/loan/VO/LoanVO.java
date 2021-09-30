@@ -1,24 +1,16 @@
 package com.finance.LoanAdvisor.loan.VO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoanVO {
     private Integer loanId;
     private String loanDesc;
     private Double ROI;
     private String loanType;
-    
-	public LoanVO(Integer loanId, String loanDesc, Double rOI, String loanType) {
-		super();
-		this.loanId = loanId;
-		this.loanDesc = loanDesc;
-		ROI = rOI;
-		this.loanType = loanType;
-	}
-    
-    
-    
 }

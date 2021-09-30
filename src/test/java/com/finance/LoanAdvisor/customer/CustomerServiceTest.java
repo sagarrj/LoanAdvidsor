@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
+import com.finance.LoanAdvisor.entities.Loan;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +40,11 @@ class CustomerServiceTest {
 	CustomerService customerService;
 
 	private Customer customer;
-	private  CustomerDTO customerVO;
+
+	private  CustomerDTO customerDTO;
+
+	private SanctionDTO sanctionDTO;
+	private Loan loan;
 
 	private static final int DEFAULT_ID = 0;
 
@@ -68,14 +74,36 @@ class CustomerServiceTest {
 
 	@BeforeEach
 	void initCustomerVO() {
-		customerVO = new CustomerDTO();
-		customerVO.setCustomerId(10);
-		customerVO.setFirstName("Pooja");
-		customerVO.setLastName("Patil");
-		customerVO.setEmail("poojapatil@gmail.com");
-		customerVO.setAge(31);
-		customerVO.setCreditScore(900);
-		customerVO.setIncome(70000);
+		customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(10);
+		customerDTO.setFirstName("Pooja");
+		customerDTO.setLastName("Patil");
+		customerDTO.setEmail("poojapatil@gmail.com");
+		customerDTO.setAge(31);
+		customerDTO.setCreditScore(900);
+		customerDTO.setIncome(70000);
+
+	}
+	@BeforeEach
+	void initCustomer(){
+		customer.setCustomerId(1);
+		customer.setIncome(30000);
+		customer.setCreditScore(700);
+		customer.setAge(30);
+	}
+
+	@BeforeEach
+	void initLoan(){
+        loan.setLoanId(5);
+		loan.setROI(8.50);
+		loan.setLoanDesc("EDUCATIONAL");
+	}
+
+	@BeforeEach
+	void initSanctionDTO(){
+		sanctionDTO.setRoi(8.50);
+		sanctionDTO.setLoanAmount(900000);
+		sanctionDTO.setLoanType("EDUCATIONAL");
 
 	}
 
@@ -83,13 +111,13 @@ class CustomerServiceTest {
 	@DisplayName("Test Customer List --Success")
 	void testGetAllCustomersValid() {
 		List<Customer> savedCustomerList = new ArrayList<>();
-		List<CustomerDTO> savedCustomerVOList = new ArrayList<>();
+		List<CustomerDTO> savedCustomerDTOList = new ArrayList<>();
 		savedCustomerList.add(customer);
-		savedCustomerVOList.add(customerVO);
+		savedCustomerDTOList.add(customerDTO);
 		Mockito.when(customerRepository.findAllByStatus(STATUS)).thenReturn(savedCustomerList);
 		List<CustomerDTO> customerVOList = customerService.getAllCustomers();
 		Assertions.assertNotNull(customerVOList);
-		Assertions.assertEquals(savedCustomerVOList, customerVOList);
+		Assertions.assertEquals(savedCustomerDTOList, customerVOList);
 	}
 	
 	@Test
@@ -112,7 +140,7 @@ class CustomerServiceTest {
 		doReturn(Optional.of(customer)).when(customerRepository).findById(10);
 		Optional<CustomerDTO> customerInfo = Optional.of(customerService.getCustomer(10));
 		Assertions.assertTrue(customerInfo.isPresent());
-		Assertions.assertEquals(customerVO, customerInfo.get());
+		Assertions.assertEquals(customerDTO, customerInfo.get());
 	}
 	
 	@Test
@@ -137,9 +165,10 @@ class CustomerServiceTest {
 		when(customerRepository.save(customer)).thenReturn(customer);
 		CustomerDTO customerVOInfo = customerService.addCustomer(customer);
 		Assertions.assertNotNull(customerVOInfo);
-		Assertions.assertEquals(customerVO, customerVOInfo);
+		Assertions.assertEquals(customerDTO, customerVOInfo);
 		
 	}
+
 	
 	@Test
 	@DisplayName("Test Add Customer --Not Found")
@@ -150,6 +179,11 @@ class CustomerServiceTest {
 		   customerService.addCustomer(customer);
 		  });
 		  Assertions.assertEquals(CUSTOMER_IS_ALREADY_CREATED, exception.getMessage());
+	}
+	@Test
+	void testCustomerLoanEligibility(){
+
+
 	}
 
 }

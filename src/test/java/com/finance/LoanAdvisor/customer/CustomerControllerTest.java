@@ -41,6 +41,7 @@ import com.finance.LoanAdvisor.entities.Customer;
 @AutoConfigureMockMvc
 class CustomerControllerTest {
 
+
 	@MockBean
 	CustomerService customerService;
 
@@ -173,4 +174,5 @@ class CustomerControllerTest {
 			throw new RuntimeException(e);
 		}
 	}
+
 }

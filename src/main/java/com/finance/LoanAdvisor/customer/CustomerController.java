@@ -2,8 +2,12 @@ package com.finance.LoanAdvisor.customer;
 
 import java.util.List;
 
+
 import javax.validation.Valid;
 
+
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
+import com.finance.LoanAdvisor.entities.Sanction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,8 @@ public class CustomerController {
 	 * 
 	 * @return {@link List} of {@link CustomerDTO}
 	 *
+	 * @return {@link List} of {@link CustomerVO}
+	 *
 	 */
 	@GetMapping("/list")
 	public ResponseEntity<List<CustomerDTO>> getAllCustomers() throws DataNotFoundException{
@@ -52,7 +58,7 @@ public class CustomerController {
 
 	/**
 	 * This method accepts customer Id and returns customer details based on Id.
-	 * 
+	 *
 	 * @param customerId : {@link Integer}
 	 * @return {@link ResponseEntity} of {@link CustomerDTO}
 	 */
@@ -82,6 +88,18 @@ public class CustomerController {
 			throw new DataNotFoundException("Customer is already created");
 		}
 		return new ResponseEntity<CustomerDTO>(customerInfo, HttpStatus.CREATED);
+	}
+
+	/**
+	 * This gets data from table and return an object of
+	 * {@link SanctionDTO} containing all arguments which has been saved
+	 * {@link Sanction} Object.
+	 * @return {@link ResponseEntity} of {@link SanctionDTO}
+	 */
+	@GetMapping("/sanction/{customerId}/{loanId}")
+	public ResponseEntity<SanctionDTO> loanEligibility(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) {
+		SanctionDTO sanctionInfo = customerService.customerLoanEligibility(customerId, loanId);
+		return new ResponseEntity<SanctionDTO>(sanctionInfo,HttpStatus.OK);
 	}
 
 }

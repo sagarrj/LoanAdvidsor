@@ -15,6 +15,13 @@ import java.util.List;
 
 
 
+/**
+ * @author pkhedkar
+ * This entity class includes declaration of parameters of 
+ *         Customer class, no arguments constructors and parameterized constructors, getter
+ *         and setter of parameters.
+ *
+ */
 @Entity
 @Table
 @Data
@@ -41,10 +48,6 @@ public class Loan {
     private Date updateDttm;
     private Integer updatedBy;
     
-	
-    
-	
-    
 
    
 
@@ -54,7 +57,8 @@ public class Loan {
 
 	
     
- 
+  
+
     /*@OneToMany(mappedBy = "loan")
 
     private Set<Sanction> sanctionSet = new HashSet<>();*/
