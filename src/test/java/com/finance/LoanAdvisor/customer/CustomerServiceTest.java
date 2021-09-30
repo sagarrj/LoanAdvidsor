@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
 import com.finance.LoanAdvisor.entities.Loan;
+import com.finance.LoanAdvisor.entities.LoanType;
 import com.finance.LoanAdvisor.entities.Sanction;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
@@ -103,10 +104,12 @@ class CustomerServiceTest {
 
 	@BeforeEach
 	void initLoan(){
+		LoanType loanType= new LoanType();
+		loanType.setLoanDescription("EDUCATIONAL");
 		loan = new Loan();
         loan.setLoanId(5);
 		loan.setROI(8.50);
-		loan.setLoanDesc("EDUCATIONAL");
+		loan.setLoanType(loanType);
 
 	}
 
@@ -194,19 +197,14 @@ class CustomerServiceTest {
 	}
 	@Test
 	void testCustomerLoanEligibility(){
-//		Customer customer = new Customer();
-		//when(customerRepository.findById(10)).thenReturn(customerVO);
-		Sanction sanction = new Sanction(1,customer,loan,30000.0,8.50,'A',null,null,null,null);
-//		doReturn(customer).when(customerRepository.findById(10));
-//		doReturn(loan).when(loanRepository.findById(5));
-//		doReturn(sanctionDTO).when(customerService.convertTOSanctionVO(sanction));
-//		doReturn(sanction).when(sanctionRepository.save(sanction));
 
+		customer.setLoanRequirement(30000);
+		customer.setGender("Male");
+		Sanction sanction = new Sanction(1,customer,loan,30000.0,8.50,'A',null,null,null,null);
 		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
 		when(loanRepository.findById(5)).thenReturn(Optional.of(loan));
-	     when(customerService.convertTOSanctionVO(sanction)).thenReturn(sanctionDTO);
+//	     when(customerService.convertTOSanctionVO(sanction)).thenReturn(sanctionDTO);
 		when(sanctionRepository.save(sanction)).thenReturn(sanction);
-
 		when(customerRepository.save(customer)).thenReturn(customer);
 		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10,5);
         Assertions.assertNotNull(customer);
