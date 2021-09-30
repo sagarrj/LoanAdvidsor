@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.repositoryTest;
+package com.finance.LoanAdvisor.entities.repository;
 
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.LoanType;

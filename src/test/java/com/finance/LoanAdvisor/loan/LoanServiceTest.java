@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.loanTest;
+package com.finance.LoanAdvisor.loan;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
