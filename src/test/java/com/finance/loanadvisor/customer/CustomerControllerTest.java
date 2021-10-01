@@ -2,8 +2,10 @@ package com.finance.loanadvisor.customer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finance.loanadvisor.customer.dto.CustomerDTO;
-import com.finance.loanadvisor.entities.Customer;
+import com.finance.loanadvisorr.customer.CustomerController;
+import com.finance.loanadvisorr.customer.CustomerService;
+import com.finance.loanadvisorr.customer.dto.CustomerDTO;
+import com.finance.loanadvisorr.entities.Customer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

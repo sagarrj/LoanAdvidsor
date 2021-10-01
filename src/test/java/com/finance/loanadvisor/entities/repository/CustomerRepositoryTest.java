@@ -1,6 +1,7 @@
 package com.finance.loanadvisor.entities.repository;
 
-import com.finance.loanadvisor.entities.Customer;
+import com.finance.loanadvisorr.entities.Customer;
+import com.finance.loanadvisorr.entities.repository.CustomerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

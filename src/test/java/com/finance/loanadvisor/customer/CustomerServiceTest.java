@@ -1,15 +1,16 @@
 package com.finance.loanadvisor.customer;
 
-import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
-import com.finance.loanadvisor.customer.dto.CustomerDTO;
-import com.finance.loanadvisor.entities.Customer;
-import com.finance.loanadvisor.entities.Loan;
-import com.finance.loanadvisor.entities.LoanType;
-import com.finance.loanadvisor.entities.Sanction;
-import com.finance.loanadvisor.entities.repository.CustomerRepository;
-import com.finance.loanadvisor.entities.repository.LoanRepository;
-import com.finance.loanadvisor.entities.repository.SanctionRepository;
-import com.finance.loanadvisor.exception.DataNotFoundException;
+import com.finance.loanadvisorr.Sanction.dto.SanctionDTO;
+import com.finance.loanadvisorr.customer.CustomerService;
+import com.finance.loanadvisorr.customer.dto.CustomerDTO;
+import com.finance.loanadvisorr.entities.Customer;
+import com.finance.loanadvisorr.entities.Loan;
+import com.finance.loanadvisorr.entities.LoanType;
+import com.finance.loanadvisorr.entities.Sanction;
+import com.finance.loanadvisorr.entities.repository.CustomerRepository;
+import com.finance.loanadvisorr.entities.repository.LoanRepository;
+import com.finance.loanadvisorr.entities.repository.SanctionRepository;
+import com.finance.loanadvisorr.exception.DataNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +53,7 @@ class CustomerServiceTest {
 
 	private  CustomerDTO customerDTO;
 
-	private com.finance.loanadvisor.Sanction.dto.SanctionDTO sanctionDTO;
+	private SanctionDTO sanctionDTO;
 	private Loan loan;
 
 	private static final int DEFAULT_ID = 0;

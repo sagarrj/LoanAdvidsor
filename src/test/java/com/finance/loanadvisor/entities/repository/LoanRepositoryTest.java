@@ -1,8 +1,9 @@
 package com.finance.loanadvisor.entities.repository;
 
-import com.finance.loanadvisor.entities.Loan;
-import com.finance.loanadvisor.entities.LoanType;
-import com.finance.loanadvisor.loan.dto.LoanDTO;
+import com.finance.loanadvisorr.entities.Loan;
+import com.finance.loanadvisorr.entities.LoanType;
+import com.finance.loanadvisorr.entities.repository.LoanRepository;
+import com.finance.loanadvisorr.loan.dto.LoanDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

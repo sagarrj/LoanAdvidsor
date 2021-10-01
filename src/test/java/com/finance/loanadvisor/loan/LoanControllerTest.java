@@ -2,10 +2,12 @@ package com.finance.loanadvisor.loan;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finance.loanadvisor.entities.Loan;
-import com.finance.loanadvisor.loan.dto.LoanDTO;
-import com.finance.loanadvisor.loan.dto.RegisterRequest;
-import com.finance.loanadvisor.loan.dto.RegisterResponse;
+import com.finance.loanadvisorr.entities.Loan;
+import com.finance.loanadvisorr.loan.LoanController;
+import com.finance.loanadvisorr.loan.LoanService;
+import com.finance.loanadvisorr.loan.dto.LoanDTO;
+import com.finance.loanadvisorr.loan.dto.RegisterRequest;
+import com.finance.loanadvisorr.loan.dto.RegisterResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
