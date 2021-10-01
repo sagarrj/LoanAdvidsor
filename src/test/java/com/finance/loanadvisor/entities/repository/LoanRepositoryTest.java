@@ -1,5 +1,6 @@
 package com.finance.loanadvisor.entities.repository;
 
+import com.finance.loanadvisor.config.ApplicationConstants;
 import com.finance.loanadvisor.entities.Loan;
 import com.finance.loanadvisor.entities.LoanType;
 import com.finance.loanadvisor.loan.dto.LoanDTO;
@@ -18,19 +19,19 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-
-
+/**
+ * @author pkhedkar
+ *
+ */
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
 public class LoanRepositoryTest {
 
-	
 	@Autowired
 	LoanRepository loanRepository;
 	private Loan loan;
-	private LoanDTO loanVO;
-	
+	private LoanDTO loanDTO;
+
 	@BeforeEach
 	void initEmployeeObject() {
 		loan = new Loan();
@@ -42,39 +43,45 @@ public class LoanRepositoryTest {
 		loan.setCreatedBy(null);
 		loan.setUpdateDttm(null);
 		loan.setUpdatedBy(null);
-		LoanType loanType=new LoanType();
+		LoanType loanType = new LoanType();
 		loanType.setLoanDescription("HomeLoanDes");
 		loan.setLoanType(loanType);
 	}
 
 	@BeforeEach
 	void initEmployeeObject1() {
-		loanVO = new LoanDTO();
-		loanVO.setLoanId(1);
-		loanVO.setLoanDesc("HOMELOAN");
-		loanVO.setLoanType("HomeLoanDes");
-		loanVO.setROI(7.0);
+		loanDTO = new LoanDTO();
+		loanDTO.setLoanId(1);
+		loanDTO.setLoanDesc("HOMELOAN");
+		loanDTO.setLoanType("HomeLoanDes");
+		loanDTO.setROI(7.0);
 
 	}
+
+	/**
+	 * This method test case list of all loan.
+	 */
 	@Test
-	public void testAllLoan() {
-		 List<LoanDTO> listLoanVO= new ArrayList<>();
-		 listLoanVO.add(new LoanDTO(1, "HOMELOAN",7.0,null ));
-		List<LoanDTO> listLoan = Arrays.asList(loanVO);
-		List<Loan> allCustomer =loanRepository.findAllByStatus('A');
+	public void AllLoan() {
+		List<LoanDTO> listLoanDTO = new ArrayList<>();
+		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
+		Arrays.asList(loanDTO);
+		List<Loan> allCustomer = loanRepository.findAllByStatus(ApplicationConstants.ACTIVE);
 		assertThat(allCustomer.size()).isGreaterThanOrEqualTo(1);
-		
-		}
-	
+
+	}
+
+	/**
+	 * This method test case on base of id
+	 */
 	@Test
-	public void testFindByIdUser() {
-		 List<LoanDTO> listLoanVO= new ArrayList<>();
-		 listLoanVO.add(new LoanDTO(1, "HOMELOAN",7.0,null ));
-			List<LoanDTO> listLoan = Arrays.asList(loanVO);
-			loanRepository.findById(1);
+	public void getLoan() {
+		List<LoanDTO> listLoanDTO = new ArrayList<>();
+		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
+		Arrays.asList(loanDTO);
+		loanRepository.findById(1);
 		Assertions.assertEquals(1, loan.getLoanId());
 
 	}
-	
-	}
 
+}

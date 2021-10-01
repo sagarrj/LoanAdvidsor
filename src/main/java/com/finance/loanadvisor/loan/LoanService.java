@@ -30,22 +30,6 @@ import static com.finance.loanadvisor.config.ApplicationConstants.*;
  * @author pkhedkar
  *
  */
-/**
- * @author pkhedkar
- *
- */
-/**
- * @author pkhedkar
- *
- */
-/**
- * @author pkhedkar
- *
- */
-/**
- * @author pkhedkar
- *
- */
 @Service
 @RequiredArgsConstructor
 public class LoanService {
@@ -62,13 +46,13 @@ public class LoanService {
 
 	public RegisterResponse registerCustomerForLoan(RegisterRequest registerRequest) {
 
-		if(registerRequest.getCustomerId() < 1 || registerRequest.getSanctionId() <1 ){
+		if (registerRequest.getCustomerId() < 1 || registerRequest.getSanctionId() < 1) {
 			throw new ApplicationException(INVALID_INPUT);
 		}
 
-		List<Borrower> borrowers = borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(registerRequest.getCustomerId(),
-				registerRequest.getSanctionId());
-		if(!borrowers.isEmpty()){
+		List<Borrower> borrowers = borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(
+				registerRequest.getCustomerId(), registerRequest.getSanctionId());
+		if (!borrowers.isEmpty()) {
 			throw new ApplicationException(CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN);
 		}
 
@@ -81,7 +65,7 @@ public class LoanService {
 			Integer maxTenure = MAX_AGE - customer.getAge();
 			if (maxTenure < 1) {
 				throw new ApplicationException(CANNOT_PROVIDE_LOAN_AFTER + MAX_AGE);
-			}else if(maxTenure <= 1){
+			} else if (maxTenure <= 1) {
 				throw new ApplicationException(CANNOT_PROVIDE_LOAN_FOR_SUCH_SMALL_DURATION + maxTenure);
 			}
 
@@ -119,7 +103,6 @@ public class LoanService {
 	public LoanDTO getLoan(int id) throws ApplicationException {
 
 		Optional<Loan> optionalLoan = loanRepository.findById(id);
-//Optional.ofNullable(optionalLoan)!=null
 
 		if (!optionalLoan.isPresent() || optionalLoan == null) {
 
@@ -137,7 +120,7 @@ public class LoanService {
 	/**
 	 * This method returns list of all available Loan
 	 * 
-	 * @return {@link LoanDTO}
+	 * @return {@link LoanDTO} list
 	 * @throws ApplicationException
 	 */
 	public List<LoanDTO> getAllLoan() throws ApplicationException {
@@ -175,9 +158,9 @@ public class LoanService {
 	/**
 	 * This method contain {@link Loan} of boject into {@link LoanDTO} This method
 	 * contain model mapper
-	 *
+	 * 
 	 * @param loan
-	 * @return
+	 * @return {@link LoanDTO}
 	 */
 	private LoanDTO convertToLoanDTO(Loan loan) {
 		LoanDTO loanDTO = modelMapper.map(loan, LoanDTO.class);
