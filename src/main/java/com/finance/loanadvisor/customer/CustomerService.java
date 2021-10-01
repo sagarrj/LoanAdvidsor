@@ -9,7 +9,7 @@ import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
 import com.finance.loanadvisor.entities.repository.LoanTypeRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
-import com.finance.loanadvisor.exception.CustomerNotEligibleException;
+import com.finance.loanadvisor.exception.ApplicationException;
 import com.finance.loanadvisor.exception.DataNotFoundException;
 import com.finance.loanadvisor.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
@@ -199,7 +199,7 @@ public class CustomerService {
 	 * This method checks the eligibility of customers for loan and returns the
 	 * attribute such as LoanAmount, ROI, LoanDescription
 	 * 
-	 * @throws CustomerNotEligibleException
+	 * @throws ApplicationException
 	 */
 
 	public SanctionDTO customerLoanEligibility(int customerId, int loanId) {
@@ -253,7 +253,7 @@ public class CustomerService {
 				}
 			}
 			else {
-				throw new CustomerNotEligibleException("Customer is not eligible for loan");
+				throw new ApplicationException("Customer is not eligible for loan");
 		}
 			sanction.setROI(roi);
 			if(customer.getGender().equalsIgnoreCase("Female")&& customer.getAge()<40){
@@ -267,7 +267,7 @@ public class CustomerService {
 			if(loanRequirement < maxLoanAmount){
 				sanction.setLoanAmount(loanRequirement);
 			}else if(loanRequirement > maxLoanAmount){
-				throw new CustomerNotEligibleException("Customer is not eligible for loan");
+				throw new ApplicationException("Customer is not eligible for loan");
 			}
 				sanction.setCustomer(customer);
 				sanction.setLoan(loan);

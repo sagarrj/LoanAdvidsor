@@ -9,8 +9,6 @@ import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
 import com.finance.loanadvisor.exception.ApplicationException;
-import com.finance.loanadvisor.exception.BadRequestException;
-import com.finance.loanadvisor.exception.DataNotFoundException;
 import com.finance.loanadvisor.loan.dto.LoanDTO;
 import com.finance.loanadvisor.loan.dto.RegisterRequest;
 import com.finance.loanadvisor.loan.dto.RegisterResponse;
@@ -106,7 +104,7 @@ public class LoanService {
 			return registerResponse;
 
 		} else {
-			throw new DataNotFoundException(CUSTOMER_SANCTION_NOT_FOUND);
+			throw new ApplicationException(CUSTOMER_SANCTION_NOT_FOUND);
 		}
 
 	}
@@ -116,9 +114,9 @@ public class LoanService {
 	 *
 	 * @param id:{@link Integer}
 	 * @return {@link LoanDTO}
-	 * @throws DataNotFoundException
+	 * @throws ApplicationException
 	 */
-	public LoanDTO getLoan(int id) throws DataNotFoundException, BadRequestException {
+	public LoanDTO getLoan(int id) throws ApplicationException {
 
 		Optional<Loan> optionalLoan = loanRepository.findById(id);
 //Optional.ofNullable(optionalLoan)!=null
@@ -126,7 +124,7 @@ public class LoanService {
 		if (!optionalLoan.isPresent() || optionalLoan == null) {
 
 			logger.warn("Loan not found");
-			throw new DataNotFoundException(LOAN_NOT_FOUND);
+			throw new ApplicationException(LOAN_NOT_FOUND);
 		}
 
 		Loan loan = optionalLoan.get();
@@ -140,14 +138,14 @@ public class LoanService {
 	 * This method returns list of all available Loan
 	 * 
 	 * @return {@link LoanDTO}
-	 * @throws DataNotFoundException
+	 * @throws ApplicationException
 	 */
-	public List<LoanDTO> getAllLoan() throws DataNotFoundException {
+	public List<LoanDTO> getAllLoan() throws ApplicationException {
 
 		List<Loan> loanList = loanRepository.findAllByStatus(ACTIVE);
 		if (loanList.isEmpty()) {
 			logger.warn("List is empty");
-			throw new DataNotFoundException(LIST_IS_EMPTY);
+			throw new ApplicationException(LIST_IS_EMPTY);
 		}
 		logger.info("List of Loans from service");
 		List<LoanDTO> loanDTOList = convertToLoanDTOList(loanList);

@@ -40,12 +40,6 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(details, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(CustomerNotEligibleException.class)
-    public ResponseEntity<ErrorDetails> handleException(CustomerNotEligibleException exception, WebRequest request) {
-        ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
-        return new ResponseEntity<ErrorDetails>(details, HttpStatus.NOT_FOUND);
-
-    }
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 

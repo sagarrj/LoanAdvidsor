@@ -1,8 +1,6 @@
 package com.finance.loanadvisor.loan;
 
 
-import com.finance.loanadvisor.exception.BadRequestException;
-import com.finance.loanadvisor.exception.DataNotFoundException;
 import com.finance.loanadvisor.loan.dto.LoanDTO;
 import com.finance.loanadvisor.loan.dto.RegisterRequest;
 import com.finance.loanadvisor.loan.dto.RegisterResponse;
@@ -47,9 +45,9 @@ public class LoanController {
 	 */
 	@GetMapping(value = "/view/{id}")
 
-	public ResponseEntity<LoanDTO> getLoan(
-			@PathVariable("id") @NotNull(message = "Loan Id should not be empty") Integer id)
-			throws DataNotFoundException, BadRequestException {
+	public ResponseEntity<LoanDTO> getLoan(@PathVariable("id")
+											   @NotNull(message = "Loan Id should not be empty")
+													   Integer id) {
 		LoanDTO loanDTO = loanService.getLoan(id);
 		return new ResponseEntity<LoanDTO>(loanDTO, HttpStatus.OK);
 
