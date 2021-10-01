@@ -1,9 +1,8 @@
-package com.finance.LoanAdvisor.loan.DTO;
+package com.finance.LoanAdvisor.loan.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor

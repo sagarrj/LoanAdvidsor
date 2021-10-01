@@ -1,16 +1,16 @@
 package com.finance.LoanAdvisor.loan;
 
-import com.finance.LoanAdvisor.config.ApplicationException;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.config.LoanConstants;
+import com.finance.LoanAdvisor.config.ApplicationConstants;
 import com.finance.LoanAdvisor.entities.*;
 import com.finance.LoanAdvisor.entities.repository.BorrowerRepository;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
-import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
-import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
-import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
+import com.finance.LoanAdvisor.exception.ApplicationException;
+import com.finance.LoanAdvisor.exception.DataNotFoundException;
+import com.finance.LoanAdvisor.loan.dto.LoanDTO;
+import com.finance.LoanAdvisor.loan.dto.RegisterRequest;
+import com.finance.LoanAdvisor.loan.dto.RegisterResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +26,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.finance.LoanAdvisor.config.LoanConstants.CANNOT_PROVIDE_LOAN_AFTER;
-import static com.finance.LoanAdvisor.config.LoanConstants.MAX_AGE;
+import static com.finance.LoanAdvisor.config.ApplicationConstants.CANNOT_PROVIDE_LOAN_AFTER;
+import static com.finance.LoanAdvisor.config.ApplicationConstants.MAX_AGE;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -115,7 +115,7 @@ public class LoanServiceTest {
 		when(loanRepository.findAllByStatus('A')).thenReturn(new ArrayList<>());
 
 		Throwable exception = assertThrows(DataNotFoundException.class, () -> loanService.getAllLoan());
-		Assertions.assertEquals(LoanConstants.LIST_IS_EMPTY, exception.getMessage());
+		Assertions.assertEquals(ApplicationConstants.LIST_IS_EMPTY, exception.getMessage());
 
 	}
 
@@ -140,7 +140,7 @@ public class LoanServiceTest {
 	public void getLoanByIdNotFound() {
 		when(loanRepository.findById(1)).thenReturn(Optional.ofNullable(null));
 		Throwable exception = assertThrows(DataNotFoundException.class, () -> loanService.getLoan(1));
-		Assertions.assertEquals(LoanConstants.LOAN_NOT_FOUND, exception.getMessage());
+		Assertions.assertEquals(ApplicationConstants.LOAN_NOT_FOUND, exception.getMessage());
 	}
 
 	@BeforeEach
@@ -186,7 +186,7 @@ public class LoanServiceTest {
 
 		Throwable exception = assertThrows(DataNotFoundException.class, () -> loanService.registerCustomerForLoan(registerRequest));
 
-		Assertions.assertEquals(LoanConstants.CUSTOMER_SANCTION_NOT_FOUND, exception.getMessage());
+		Assertions.assertEquals(ApplicationConstants.CUSTOMER_SANCTION_NOT_FOUND, exception.getMessage());
 
 	}
 
@@ -219,7 +219,7 @@ public class LoanServiceTest {
 		registerRequest = new RegisterRequest(customerId, sanctionId, 10);
 		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.registerCustomerForLoan(registerRequest));
 
-		Assertions.assertEquals(LoanConstants.INVALID_INPUT, exception.getMessage());
+		Assertions.assertEquals(ApplicationConstants.INVALID_INPUT, exception.getMessage());
 
 	}
 
@@ -237,7 +237,7 @@ public class LoanServiceTest {
 
 		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.registerCustomerForLoan(registerRequest));
 
-		Assertions.assertEquals(LoanConstants.CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN, exception.getMessage());
+		Assertions.assertEquals(ApplicationConstants.CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN, exception.getMessage());
 
 	}
 

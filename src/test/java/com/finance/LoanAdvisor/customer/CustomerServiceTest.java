@@ -1,19 +1,15 @@
 package com.finance.LoanAdvisor.customer;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
+import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
+import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.LoanType;
 import com.finance.LoanAdvisor.entities.Sanction;
+import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
+import com.finance.LoanAdvisor.exception.DataNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,11 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
-import com.finance.LoanAdvisor.entities.Customer;
-import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class CustomerServiceTest {

@@ -3,11 +3,12 @@ package com.finance.LoanAdvisor.loan;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
+import com.finance.LoanAdvisor.loan.dto.LoanDTO;
+import com.finance.LoanAdvisor.loan.dto.RegisterRequest;
+import com.finance.LoanAdvisor.loan.dto.RegisterResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +26,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -83,7 +86,7 @@ public class LoanControllerTest {
 	public void testGetAllLoan() throws Exception  {
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
 		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
-		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
+		when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
 		String url = "/loan/list";
 		mockMvc.perform(get(url)).andExpect(status().isOk());
 		
@@ -99,7 +102,7 @@ public class LoanControllerTest {
 	{
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
 		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
-		Mockito.when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
+		when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
 			mockMvc.perform(
 					get("/loan/list" +loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isNotFound());
@@ -117,7 +120,7 @@ public class LoanControllerTest {
 	@DisplayName("Test Get Loan By Id")
 	public void testGetLoan() throws Exception {
 
-		Mockito.when(loanservice.getLoan(1)).thenReturn(loanDTO);
+		when(loanservice.getLoan(1)).thenReturn(loanDTO);
 		String url = "/loan/view/1";
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(url).accept(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -144,6 +147,23 @@ public class LoanControllerTest {
 		 mockMvc.perform(get("/loan/view/{id}",10))
 	        .andExpect(status().isNotFound());
 }
+
+	@Test
+	@DisplayName("Register for loan")
+	public void registerForLoan() throws Exception  {
+		String url="/loan/register";
+		RegisterRequest registerRequest = new RegisterRequest(1,1,10);
+		RegisterResponse registerResponse = new RegisterResponse(10,22222.0);
+		when(loanservice.registerCustomerForLoan(registerRequest)).thenReturn(registerResponse);
+		MvcResult result = mockMvc.perform(post(url)
+				.content(mapToJson(registerRequest))
+				.contentType(MediaType.APPLICATION_JSON)
+		).andReturn();
+
+		String responseString = result.getResponse().getContentAsString();
+
+		assertThat(responseString).isEqualTo(mapToJson(registerResponse));
+	}
 
 
 

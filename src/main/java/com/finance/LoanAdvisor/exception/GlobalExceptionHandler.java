@@ -1,8 +1,4 @@
-package com.finance.LoanAdvisor.config;
-
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+package com.finance.LoanAdvisor.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @ControllerAdvice

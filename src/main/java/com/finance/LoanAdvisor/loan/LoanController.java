@@ -1,11 +1,11 @@
 package com.finance.LoanAdvisor.loan;
 
 
-import com.finance.LoanAdvisor.config.BadRequestException;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
-import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
-import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
+import com.finance.LoanAdvisor.exception.BadRequestException;
+import com.finance.LoanAdvisor.exception.DataNotFoundException;
+import com.finance.LoanAdvisor.loan.dto.LoanDTO;
+import com.finance.LoanAdvisor.loan.dto.RegisterRequest;
+import com.finance.LoanAdvisor.loan.dto.RegisterResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.finance.LoanAdvisor.config;
+package com.finance.LoanAdvisor.exception;
  
 
 /**

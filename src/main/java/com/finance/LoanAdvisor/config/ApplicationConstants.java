@@ -7,7 +7,7 @@ package com.finance.LoanAdvisor.config;
  * In this class we set  strings to constants
  *
  */
-public interface LoanConstants
+public interface ApplicationConstants
 {
     Integer MAX_AGE = 60;
     String CUSTOMER_SANCTION_NOT_FOUND = "customer or sanction not found";

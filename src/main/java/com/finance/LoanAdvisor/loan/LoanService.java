@@ -1,8 +1,5 @@
 package com.finance.LoanAdvisor.loan;
 
-import com.finance.LoanAdvisor.config.ApplicationException;
-import com.finance.LoanAdvisor.config.BadRequestException;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
 import com.finance.LoanAdvisor.entities.Borrower;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
@@ -11,9 +8,12 @@ import com.finance.LoanAdvisor.entities.repository.BorrowerRepository;
 import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
-import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
-import com.finance.LoanAdvisor.loan.DTO.RegisterRequest;
-import com.finance.LoanAdvisor.loan.DTO.RegisterResponse;
+import com.finance.LoanAdvisor.exception.ApplicationException;
+import com.finance.LoanAdvisor.exception.BadRequestException;
+import com.finance.LoanAdvisor.exception.DataNotFoundException;
+import com.finance.LoanAdvisor.loan.dto.LoanDTO;
+import com.finance.LoanAdvisor.loan.dto.RegisterRequest;
+import com.finance.LoanAdvisor.loan.dto.RegisterResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static com.finance.LoanAdvisor.config.LoanConstants.*;
+import static com.finance.LoanAdvisor.config.ApplicationConstants.*;
 
 /**
  * @author pkhedkar

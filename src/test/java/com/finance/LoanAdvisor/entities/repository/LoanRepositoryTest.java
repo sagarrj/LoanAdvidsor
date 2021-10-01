@@ -2,8 +2,7 @@ package com.finance.LoanAdvisor.entities.repository;
 
 import com.finance.LoanAdvisor.entities.Loan;
 import com.finance.LoanAdvisor.entities.LoanType;
-import com.finance.LoanAdvisor.entities.repository.LoanRepository;
-
+import com.finance.LoanAdvisor.loan.dto.LoanDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,12 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-
-import com.finance.LoanAdvisor.entities.Loan;
-import com.finance.LoanAdvisor.entities.LoanType;
-import com.finance.LoanAdvisor.entities.repository.LoanRepository;
-import com.finance.LoanAdvisor.loan.DTO.LoanDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,9 +1,6 @@
 package com.finance.LoanAdvisor.customer;
 
 import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
-import com.finance.LoanAdvisor.config.CustomerNotEligibleException;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.config.ValidationException;
 import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
 import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Loan;
@@ -12,6 +9,9 @@ import com.finance.LoanAdvisor.entities.repository.CustomerRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanRepository;
 import com.finance.LoanAdvisor.entities.repository.LoanTypeRepository;
 import com.finance.LoanAdvisor.entities.repository.SanctionRepository;
+import com.finance.LoanAdvisor.exception.CustomerNotEligibleException;
+import com.finance.LoanAdvisor.exception.DataNotFoundException;
+import com.finance.LoanAdvisor.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;

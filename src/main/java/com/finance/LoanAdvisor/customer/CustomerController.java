@@ -1,31 +1,23 @@
 package com.finance.LoanAdvisor.customer;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
+import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
+import com.finance.LoanAdvisor.entities.Customer;
 import com.finance.LoanAdvisor.entities.Sanction;
+import com.finance.LoanAdvisor.exception.DataNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.finance.LoanAdvisor.Sanction.dto.SanctionDTO;
-import com.finance.LoanAdvisor.config.DataNotFoundException;
-import com.finance.LoanAdvisor.customer.dto.CustomerDTO;
-import com.finance.LoanAdvisor.entities.Customer;
-
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author priypawa

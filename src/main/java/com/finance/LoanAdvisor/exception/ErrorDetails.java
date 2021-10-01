@@ -1,11 +1,11 @@
-package com.finance.LoanAdvisor.config;
-
-import java.time.LocalDate;
+package com.finance.LoanAdvisor.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 /**
  * @author priypawa This class includes declaration of parameters of
