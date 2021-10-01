@@ -29,8 +29,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 /**
  * @author pkhedkar
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @AutoConfigureMockMvc
 @SpringBootTest
-@WithMockUser(username="admin")
+@WithMockUser(username = "admin")
 public class LoanControllerTest {
 
 	@MockBean
@@ -48,8 +48,6 @@ public class LoanControllerTest {
 	private MockMvc mockMvc;
 
 	private LoanDTO loanDTO;
-	
-
 
 	@BeforeEach
 	void initEmployeeObject() {
@@ -80,32 +78,32 @@ public class LoanControllerTest {
 	 *
 	 * @throws Exception
 	 */
-	
+
 	@Test
 	@DisplayName(" Test Get AllLoan")
-	public void testGetAllLoan() throws Exception  {
+	public void getAllLoan() throws Exception {
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
 		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
 		when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
 		String url = "/loan/list";
 		mockMvc.perform(get(url)).andExpect(status().isOk());
-		
+
 	}
 
 	/**
-	 * This method tests status and {@link List} of {@link Loan} testGetAllLoanNotFound method
+	 * This method tests status and {@link List} of {@link Loan}
+	 * testGetAllLoanNotFound method
+	 * 
 	 * @throws Exception
 	 */
 	@Test
 	@DisplayName("Test Get AllLoan Not Found")
-	public void testGetAllLoanNotFound() throws Exception
-	{
+	public void getAllLoanNotFound() throws Exception {
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
 		listLoanDTO.add(new LoanDTO(1, "HOMELOAN", 7.0, null));
 		when(loanservice.getAllLoan()).thenReturn(listLoanDTO);
-			mockMvc.perform(
-					get("/loan/list" +loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isNotFound());
+		mockMvc.perform(get("/loan/list" + loanDTO.getLoanId().toString()).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
 
 	}
 
@@ -115,10 +113,9 @@ public class LoanControllerTest {
 	 * @throws Exception
 	 */
 
-	
 	@Test
 	@DisplayName("Test Get Loan By Id")
-	public void testGetLoan() throws Exception {
+	public void getLoan() throws Exception {
 
 		when(loanservice.getLoan(1)).thenReturn(loanDTO);
 		String url = "/loan/view/1";
@@ -137,34 +134,34 @@ public class LoanControllerTest {
 		return objectMapper.writeValueAsString(object);
 	}
 
-
-
+	/**
+	 * This method check test status {@link Loan} on basis of id. For id not found
+	 * 
+	 * @throws Exception
+	 */
 	@Test
-	@DisplayName("Test Get Loan Not Found")
-	public void testGetLoanNotFound() throws Exception  {
-		LoanDTO loanDTO = new LoanDTO ();
-		doReturn(loanDTO).when(loanservice).getLoan(1);
-		 mockMvc.perform(get("/loan/view/{id}",10))
-	        .andExpect(status().isNotFound());
-}
+	@DisplayName("Test Get Loan Not Found by id")
+	public void getLoanNotFound() throws Exception {
+		LoanDTO loanDTO = new LoanDTO();
+		doReturn(loanDTO).when(loanservice).getLoan(10);
+		mockMvc.perform(get("/loan/view/1")).andDo(print()).andExpect(status().isInternalServerError());
+
+	}
 
 	@Test
 	@DisplayName("Register for loan")
-	public void registerForLoan() throws Exception  {
-		String url="/loan/register";
-		RegisterRequest registerRequest = new RegisterRequest(1,1,10);
-		RegisterResponse registerResponse = new RegisterResponse(10,22222.0);
+	public void registerForLoan() throws Exception {
+		String url = "/loan/register";
+		RegisterRequest registerRequest = new RegisterRequest(1, 1, 10);
+		RegisterResponse registerResponse = new RegisterResponse(10, 22222.0);
 		when(loanservice.registerCustomerForLoan(registerRequest)).thenReturn(registerResponse);
-		MvcResult result = mockMvc.perform(post(url)
-				.content(mapToJson(registerRequest))
-				.contentType(MediaType.APPLICATION_JSON)
-		).andReturn();
+		MvcResult result = mockMvc
+				.perform(post(url).content(mapToJson(registerRequest)).contentType(MediaType.APPLICATION_JSON))
+				.andReturn();
 
 		String responseString = result.getResponse().getContentAsString();
 
 		assertThat(responseString).isEqualTo(mapToJson(registerResponse));
 	}
-
-
 
 }
