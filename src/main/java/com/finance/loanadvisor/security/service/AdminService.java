@@ -6,14 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdminService
-{
+public class AdminService {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    public Boolean authenticate(User user) {
-        User repoUser = userRepository.findByUsername(user.getUsername());
-        return repoUser.getPassword().equals(user.getPassword());
-    }
+	/**
+	 * This method authenticate user details given as input and returns boolean
+	 * value by validating them.
+	 * 
+	 * @param user : {@link User}
+	 * @return : {@link Boolean}
+	 */
+	public Boolean authenticate(User user) {
+		User repoUser = userRepository.findByUsername(user.getUsername());
+		return repoUser.getPassword().equals(user.getPassword());
+	}
 }

@@ -18,46 +18,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This controller class contains authentication REST api methods
+ *
+ */
 @RestController
 @RequestMapping("/admin")
-public class AdminController
-{
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+public class AdminController {
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtUtil jwtTokenUtil;
+	@Autowired
+	private JwtUtil jwtTokenUtil;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+	@Autowired
+	private CustomUserDetailsService userDetailsService;
 
+	@Autowired
+	private AdminService adminService;
 
-    @Autowired
-    private AdminService adminService;
+	@PostMapping("/authenticate")
+	public @ResponseBody AuthResponse authenticate(@RequestBody User user) throws ApplicationException {
 
+		try {
+			authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+		} catch (BadCredentialsException e) {
+			throw new ApplicationException("Incorrect username or password", e);
+		}
 
-    @PostMapping("/authenticate")
-    public @ResponseBody
-    AuthResponse authenticate(@RequestBody User user) throws ApplicationException {
+		final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+		final String jwt = jwtTokenUtil.generateToken(userDetails);
+		List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+				.collect(Collectors.toList());
+		return new AuthResponse(jwt, roles);
 
-        try {
-            authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            throw new ApplicationException("Incorrect username or password", e);
-        }
-
-
-    final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-    final String jwt = jwtTokenUtil.generateToken(userDetails);
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-    return new AuthResponse(jwt,roles);
-
-    }
+	}
 }

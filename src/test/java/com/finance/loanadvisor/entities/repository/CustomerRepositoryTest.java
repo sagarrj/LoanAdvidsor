@@ -14,22 +14,32 @@ import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
+
+/**
+ * @author priypawa This class contains test cases of {@link CustomerRepository}
+ *         by mocking it.
+ *
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 class CustomerRepositoryTest {
 
 	@MockBean
 	CustomerRepository customerRepository;
-	
+
 	private Customer customer;
 
 	private static final int DEFAULT_ID = 0;
 
 	private static final char STATUS = 'A';
-	
+
+	/**
+	 * This method will initialize {@link Customer} object to below parameters and
+	 * execute before each test case.
+	 */
 	@BeforeEach
 	void initCustomerObject() {
-		customer =new Customer();
+		customer = new Customer();
 		customer.setCustomerId(10);
 		customer.setFirstName("Pooja");
 		customer.setLastName("Patil");
@@ -48,8 +58,11 @@ class CustomerRepositoryTest {
 		customer.setCreateDttm(new Date());
 		customer.setCreatedBy(DEFAULT_ID);
 	}
-	
 
+	/**
+	 * This method test findByEmail method by giving email as input and return
+	 * {@link Customer} details. Check assertNotNull and assertSame
+	 */
 	@Test
 	@DisplayName("Test findByEmail")
 	void testFindByEmailValid() {
@@ -58,7 +71,10 @@ class CustomerRepositoryTest {
 		Assertions.assertNotNull(customerInfo);
 		Assertions.assertSame(customer, customerInfo);
 	}
-
+	/**
+	 * This method test findAllByStatus method by giving status as input and return
+	 * {@link List} of {@link Customer} details. Check assertNotNull and assertSame
+	 */
 	@Test
 	@DisplayName("Test testFindAllByStatus")
 	void testFindAllByStatus() {

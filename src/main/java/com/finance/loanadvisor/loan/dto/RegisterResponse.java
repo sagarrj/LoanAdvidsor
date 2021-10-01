@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class contain required parameters for RegisterResponse and required
+ * constructors
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

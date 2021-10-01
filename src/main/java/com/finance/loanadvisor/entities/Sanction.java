@@ -9,7 +9,11 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-
+/**
+ * This entity class includes declaration of parameters of Sanction class, no
+ * arguments and required arguments constructor, getter and setter of parameters. Mapped
+ * {@link Customer} and {@link Loan} table.
+ */
 @Entity
 @Getter
 @Setter
