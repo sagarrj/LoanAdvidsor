@@ -3,7 +3,7 @@ package com.finance.loanadvisor.entities.repository;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author priypawa This class contains test cases of {@link BorrowerRepository}
+ *  This class contains test cases of {@link BorrowerRepository}
  *         by mocking it.
  *
  */
