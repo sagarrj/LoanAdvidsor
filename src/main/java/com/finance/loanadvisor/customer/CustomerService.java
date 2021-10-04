@@ -1,7 +1,6 @@
 package com.finance.loanadvisor.customer;
 
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
-
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Loan;
@@ -21,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.finance.loanadvisor.config.ApplicationConstants.*;
+
 /**
  * @author priypawa This service class contains business logic of
  *         {@link Customer} REST api methods.
@@ -33,15 +34,6 @@ public class CustomerService {
 	@Autowired
 	ModelMapper modelMapper;
 
-	private static final String LIST_IS_EMPTY = "List is empty";
-
-	private static final String CUSTOMER_NOT_FOUND = "Customer not found";
-
-	private static final String CUSTOMER_IS_ALREADY_CREATED = "Customer is already created";
-
-	private static final int DEFAULT_ID = 0;
-
-	private static final char STATUS = 'A';
 
 	private final CustomerRepository customerRepository;
 	private final LoanRepository loanRepository;

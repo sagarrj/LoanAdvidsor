@@ -1,7 +1,6 @@
 package com.finance.loanadvisor.customer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
@@ -20,7 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -143,7 +141,7 @@ class CustomerControllerTest {
 	/**
 	 * This method tests status and {@link List} of {@link Customer} of
 	 * getAllCustomer method {@link CustomerController} and return empty list which
-	 * is giving status {@link NotFound}
+	 * is giving status {@link }
 	 *
 	 * @throws Exception
 	 */
@@ -158,6 +156,19 @@ class CustomerControllerTest {
 		Assertions.assertTrue(savedCustomerDTOList.isEmpty());
 
 	}
+
+
+	
+	@Test
+	@DisplayName("Test GET /view --Not Found")
+	void testGetCustomerInvalid() throws Exception {
+		CustomerDTO customerVO = new CustomerDTO();
+		doReturn(customerVO).when(customerService).getCustomer(10);
+		 mockMvc.perform(get("/customer/view/{id}",1))
+	        .andExpect(status().isNotFound());
+
+	}
+
 
 	/**
 	 * This method tests addCustomer method by accepting  {@link Customer}
@@ -183,20 +194,7 @@ class CustomerControllerTest {
 		Assertions.assertNotNull(customerDTO);
 	}
 
-	/**
-	 * This method tests addCustomer method by accepting empty {@link Customer}
-	 * object which is why it's giving {@link BadRequest} status.
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	@DisplayName("Test POST /add --Not Found")
-	void testAddCustomerInvalid() throws Exception {
-		CustomerDTO savedCustomerVO = new CustomerDTO();
-		mockMvc.perform(
-				post("/customer/add").contentType(MediaType.APPLICATION_JSON).content(asJsonString(savedCustomerVO)))
-				.andExpect(status().isBadRequest());
-	}
+
 
 	/**
 	 * This method tests getCustomer method by accepting customerId and return
@@ -218,20 +216,6 @@ class CustomerControllerTest {
 
 	}
 
-	/**
-	 * This method tests getCustomer method by accepting customerId and return empty
-	 * {@link CustomerDTO} object. Checks status as {@link NotFound}
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	@DisplayName("Test GET /view --Not Found")
-	void testGetCustomerInvalid() throws Exception {
-		CustomerDTO customerDTO = new CustomerDTO();
-		doReturn(customerDTO).when(customerService).getCustomer(10);
-		mockMvc.perform(get("/customer/view/{id}", 1)).andDo(print()).andExpect(status().isNotFound());
-
-	}
 
 	@Test
 	@DisplayName("Test GET/--Sanction")

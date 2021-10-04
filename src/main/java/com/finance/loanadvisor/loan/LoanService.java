@@ -56,11 +56,15 @@ public class LoanService {
 			throw new ApplicationException(CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN);
 		}
 
-		Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
+//		Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
 		Optional<Sanction> optionalSanction = sanctionRepository.findById(registerRequest.getSanctionId());
-		if (optionalCustomer.isPresent() && optionalSanction.isPresent()) {
-			Customer customer = optionalCustomer.get();
+		if (optionalSanction.isPresent()) {
+//			Customer customer = optionalCustomer.get();
 			Sanction sanction = optionalSanction.get();
+			Customer customer = sanction.getCustomer();
+			if(customer== null){
+				throw new ApplicationException(CUSTOMER_NOT_FOUND_FOR_THIS_SANCTION);
+			}
 
 			Integer maxTenure = MAX_AGE - customer.getAge();
 			if (maxTenure < 1) {
@@ -88,7 +92,7 @@ public class LoanService {
 			return registerResponse;
 
 		} else {
-			throw new ApplicationException(CUSTOMER_SANCTION_NOT_FOUND);
+			throw new ApplicationException(SANCTION_NOT_FOUND);
 		}
 
 	}
