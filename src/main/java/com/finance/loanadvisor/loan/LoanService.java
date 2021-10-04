@@ -56,13 +56,11 @@ public class LoanService {
 			throw new ApplicationException(CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN);
 		}
 
-//		Optional<Customer> optionalCustomer = customerRepository.findById(registerRequest.getCustomerId());
 		Optional<Sanction> optionalSanction = sanctionRepository.findById(registerRequest.getSanctionId());
 		if (optionalSanction.isPresent()) {
-//			Customer customer = optionalCustomer.get();
 			Sanction sanction = optionalSanction.get();
 			Customer customer = sanction.getCustomer();
-			if(customer== null){
+			if(customer== null || !customer.getCustomerId().equals(registerRequest.getCustomerId())){
 				throw new ApplicationException(CUSTOMER_NOT_FOUND_FOR_THIS_SANCTION);
 			}
 
