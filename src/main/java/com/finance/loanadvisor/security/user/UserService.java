@@ -8,33 +8,41 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+/**
+ * This service class contain business logic implementation of {@link User}
+ * class.
+ *
+ */
 @Service
 //@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
+	/**
+	 * This method accepts and saves user details and return saved user object.
+	 * 
+	 * @param user : {@link User}
+	 * @return : {@link User}
+	 */
+	public User createUser(User user) {
+		user.setCreateDttm(new Date());
+		user.setCreatedBy(0);
+		String password = passwordEncoder.encode(user.getPassword());
+		user.setPassword(password);
+		User u = userRepository.save(user);
 
-    public User createUser(User user) {
-        user.setCreateDttm(new Date());
-        user.setCreatedBy(0);
-        String password = passwordEncoder.encode(user.getPassword());
-        user.setPassword(password);
-        User u = userRepository.save(user);
+		return u;
+	}
 
-        return u;
-    }
+	public User fetchUser(String username) {
+		return userRepository.findByUsername(username);
+	}
 
-
-    public User fetchUser(String username){
-        return userRepository.findByUsername(username);
-    }
-
-
-    public void fetchUserRole(String username) {
-    }
+	public void fetchUserRole(String username) {
+	}
 }

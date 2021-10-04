@@ -96,25 +96,24 @@ public class LoanServiceTest {
 	 */
 	@Test
 	@DisplayName(" Get all Loan")
-	public void getAllLoan() throws DataNotFoundException {
+	public void getAllLoan() {
 		List<LoanDTO> listLoanDTO = new ArrayList<>();
-		 listLoanDTO .add(new LoanDTO(1, "Home loan", 7.0, "HomeLoanDes"));
+		listLoanDTO.add(new LoanDTO(1, "Home loan", 7.0, "HomeLoanDes"));
 		when(loanRepository.findAllByStatus('A')).thenReturn(Stream.of(loan).collect(Collectors.toList()));
 		List<LoanDTO> loanFromService = loanService.getAllLoan();
 		Assertions.assertEquals(1, loanFromService.size());
-		Assertions.assertEquals( listLoanDTO , loanFromService);
+		Assertions.assertEquals(listLoanDTO, loanFromService);
 
 	}
 
 	@Test
 	@DisplayName(" Get all Loan not Found")
-	public void getAllLoanNotFound() throws DataNotFoundException {
-		List<LoanDTO>  listLoanDTO  = new ArrayList<>();
-		 listLoanDTO .add(new LoanDTO(1, "Home loan", 7.0, "HomeLoanDes"));
-
+	public void getAllLoanNotFound() {
+		List<LoanDTO> listLoanDTO = new ArrayList<>();
+		listLoanDTO.add(new LoanDTO(1, "Home loan", 7.0, "HomeLoanDes"));
 		when(loanRepository.findAllByStatus('A')).thenReturn(new ArrayList<>());
 
-		Throwable exception = assertThrows(DataNotFoundException.class, () -> loanService.getAllLoan());
+		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.getAllLoan());
 		Assertions.assertEquals(ApplicationConstants.LIST_IS_EMPTY, exception.getMessage());
 
 	}
@@ -126,12 +125,11 @@ public class LoanServiceTest {
 	 */
 	@Test
 	@DisplayName(" Get Loan By Id")
-	public void testGetLoanById() throws DataNotFoundException {
+	public void testGetLoanById() {
 		doReturn(Optional.of(loan)).when(loanRepository).findById(1);
-		Loan loan = new Loan();
 		Optional<LoanDTO> loan1 = Optional.of(loanService.getLoan(1));
 		Assertions.assertTrue(loan1.isPresent());
-		Assertions.assertEquals( loanDTO , loan1.get());
+		Assertions.assertEquals(loanDTO, loan1.get());
 
 	}
 
@@ -139,7 +137,7 @@ public class LoanServiceTest {
 	@DisplayName(" Get loan Not Found By Id")
 	public void getLoanByIdNotFound() {
 		when(loanRepository.findById(1)).thenReturn(Optional.ofNullable(null));
-		Throwable exception = assertThrows(DataNotFoundException.class, () -> loanService.getLoan(1));
+		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.getLoan(1));
 		Assertions.assertEquals(ApplicationConstants.LOAN_NOT_FOUND, exception.getMessage());
 	}
 
@@ -179,17 +177,16 @@ public class LoanServiceTest {
 		int customerId = 1000;
 		int sanctionId = 1000;
 
-
 		registerRequest = new RegisterRequest(customerId, sanctionId, 10);
 		when(customerRepository.findById(customerId)).thenReturn(Optional.ofNullable(null));
 		when(sanctionRepository.findById(sanctionId)).thenReturn(Optional.ofNullable(null));
 
-		Throwable exception = assertThrows(DataNotFoundException.class, () -> loanService.registerCustomerForLoan(registerRequest));
+		Throwable exception = assertThrows(ApplicationException.class,
+				() -> loanService.registerCustomerForLoan(registerRequest));
 
 		Assertions.assertEquals(ApplicationConstants.CUSTOMER_SANCTION_NOT_FOUND, exception.getMessage());
 
 	}
-
 
 	@Test
 	@DisplayName("Max Age For Registration of Loan")
@@ -203,8 +200,8 @@ public class LoanServiceTest {
 		when(customerRepository.findById(customerId)).thenReturn(Optional.ofNullable(customer));
 		when(sanctionRepository.findById(sanctionId)).thenReturn(Optional.ofNullable(sanction));
 
-
-		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.registerCustomerForLoan(registerRequest));
+		Throwable exception = assertThrows(ApplicationException.class,
+				() -> loanService.registerCustomerForLoan(registerRequest));
 
 		Assertions.assertEquals(CANNOT_PROVIDE_LOAN_AFTER + MAX_AGE, exception.getMessage());
 
@@ -217,7 +214,8 @@ public class LoanServiceTest {
 		int sanctionId = -1;
 
 		registerRequest = new RegisterRequest(customerId, sanctionId, 10);
-		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.registerCustomerForLoan(registerRequest));
+		Throwable exception = assertThrows(ApplicationException.class,
+				() -> loanService.registerCustomerForLoan(registerRequest));
 
 		Assertions.assertEquals(ApplicationConstants.INVALID_INPUT, exception.getMessage());
 
@@ -225,7 +223,7 @@ public class LoanServiceTest {
 
 	@Test
 	@DisplayName("Already registered for loan")
-	public void alreadyRegisteredForLoan(){
+	public void alreadyRegisteredForLoan() {
 
 		List<Borrower> borrowerList = new ArrayList<>();
 		borrowerList.add(new Borrower());
@@ -233,9 +231,10 @@ public class LoanServiceTest {
 		int sanctionId = 1;
 
 		registerRequest = new RegisterRequest(customerId, sanctionId, 10);
-		when(borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(1,1)).thenReturn(borrowerList);
+		when(borrowerRepository.findByCustomer_customerIdAndSanction_sanctionId(1, 1)).thenReturn(borrowerList);
 
-		Throwable exception = assertThrows(ApplicationException.class, () -> loanService.registerCustomerForLoan(registerRequest));
+		Throwable exception = assertThrows(ApplicationException.class,
+				() -> loanService.registerCustomerForLoan(registerRequest));
 
 		Assertions.assertEquals(ApplicationConstants.CUSTOMER_ALREADY_REGISTERED_FOR_THIS_LOAN, exception.getMessage());
 

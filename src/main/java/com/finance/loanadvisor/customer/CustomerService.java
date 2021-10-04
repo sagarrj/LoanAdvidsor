@@ -1,20 +1,18 @@
 package com.finance.loanadvisor.customer;
 
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
+
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Loan;
 import com.finance.loanadvisor.entities.Sanction;
 import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
-import com.finance.loanadvisor.entities.repository.LoanTypeRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
 import com.finance.loanadvisor.exception.ApplicationException;
 import com.finance.loanadvisor.exception.DataNotFoundException;
-import com.finance.loanadvisor.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author priypawa
+ * @author priypawa This service class contains business logic of
+ *         {@link Customer} REST api methods.
  *
  */
 @Service
@@ -47,7 +46,6 @@ public class CustomerService {
 
 	private final CustomerRepository customerRepository;
 	private final LoanRepository loanRepository;
-	private final LoanTypeRepository loanTypeRepository;
 	private final SanctionRepository sanctionRepository;
 	Sanction sanction = new Sanction();
 
@@ -59,12 +57,12 @@ public class CustomerService {
 	 *
 	 * @param customer: {@link Customer}
 	 * @return customerVO :{@link CustomerDTO}
-	 * @throws DataNotFoundException
+	 * @throws ApplicationException
 	 */
-	public CustomerDTO addCustomer(Customer customer) throws DataNotFoundException, ValidationException {
+	public CustomerDTO addCustomer(Customer customer) throws ApplicationException {
 		if (customerRepository.findByEmail(customer.getEmail()) != null) {
 			logger.warn(CUSTOMER_IS_ALREADY_CREATED);
-			throw new DataNotFoundException(CUSTOMER_IS_ALREADY_CREATED);
+			throw new ApplicationException(CUSTOMER_IS_ALREADY_CREATED);
 		}
 		if (validateCustomerData(customer)) {
 			customer.setCreditScore((int) (Math.random() * 100));
@@ -84,13 +82,13 @@ public class CustomerService {
 	 *
 	 * @param customerId
 	 * @return customerVO :{@link CustomerDTO}
-	 * @throws DataNotFoundException
+	 * @throws ApplicationException
 	 */
-	public CustomerDTO getCustomer(Integer customerId) throws DataNotFoundException, ValidationException {
+	public CustomerDTO getCustomer(Integer customerId) throws ApplicationException {
 		Customer customer = customerRepository.findById(customerId).orElse(null);
 		if (customer == null) {
 			logger.warn(CUSTOMER_NOT_FOUND);
-			throw new DataNotFoundException(CUSTOMER_NOT_FOUND);
+			throw new ApplicationException(CUSTOMER_NOT_FOUND);
 		}
 		CustomerDTO customerDTO = convertToCustomerDTO(customer);
 		logger.info("Customer returned from service");
@@ -101,15 +99,13 @@ public class CustomerService {
 	 * This method returns list of all available customers
 	 * 
 	 * @return {@link List} of {@link CustomerDTO}
-	 *
-	 * @return {@link List} of {@link CustomerDTO}
-	 * @throws DataNotFoundException
+	 * @throws ApplicationException
 	 */
-	public List<CustomerDTO> getAllCustomers() throws DataNotFoundException {
+	public List<CustomerDTO> getAllCustomers() throws ApplicationException {
 		List<Customer> customers = customerRepository.findAllByStatus(STATUS);
 		if (customers.isEmpty()) {
 			logger.warn(LIST_IS_EMPTY);
-			throw new DataNotFoundException(LIST_IS_EMPTY);
+			throw new ApplicationException(LIST_IS_EMPTY);
 		}
 		List<CustomerDTO> customerDTOList = convertToCustomerDTOList(customers);
 		logger.info("List of customers from service");
@@ -121,13 +117,6 @@ public class CustomerService {
 	 * {@link CustomerDTO}
 	 * 
 	 * @param customerList : {@link Customer}
-	 * @return customerVOList: {@link List} of {@link CustomerDTO}
-
-	 * 
-
-	 * This method converts List {@link Customer} object into {@link CustomerDTO} object
-	 *
-	 * @param : {@link Customer}
 	 * @return customerVOList: {@link List} of {@link CustomerDTO}
 	 */
 	public List<CustomerDTO> convertToCustomerDTOList(List<Customer> customerList) {
@@ -147,13 +136,7 @@ public class CustomerService {
 	 */
 	public CustomerDTO convertToCustomerDTO(Customer customer) {
 		CustomerDTO customerDTO = new CustomerDTO();
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addMappings(new PropertyMap<Customer, CustomerDTO>() {
-			protected void configure() {
-			}
-		});
 		modelMapper.map(customer, customerDTO);
-		System.out.println(customerDTO);
 		return customerDTO;
 
 	}
@@ -164,33 +147,33 @@ public class CustomerService {
 	 * 
 	 * @param customer : {@link Customer}
 	 * @return flag : {@link Boolean}
-	 * @throws ValidationException
+	 * @throws ApplicationException
 	 */
-	public boolean validateCustomerData(Customer customer) throws ValidationException {
+	public boolean validateCustomerData(Customer customer) throws ApplicationException {
 		boolean flag = false;
 		if ((customer.getAge() >= 18 && customer.getAge() <= 60)) {
 			flag = true;
 		} else {
 			flag = false;
-			throw new ValidationException("Age must be between 18 to 60");
+			throw new ApplicationException("Age must be between 18 to 60");
 		}
 		if (customer.getLoanRequirement() <= 10000000) {
 			flag = true;
 		} else {
 			flag = false;
-			throw new ValidationException("Loan requirement must be lower than or equal to 1000000");
+			throw new ApplicationException("Loan requirement must be lower than or equal to 1000000");
 		}
 		if (customer.getInitialAmount() < customer.getLoanRequirement()) {
 			flag = true;
 		} else {
 			flag = false;
-			throw new ValidationException("Initial amount should be less than loan requirement");
+			throw new ApplicationException("Initial amount should be less than loan requirement");
 		}
 		if (customer.getIncome() < 10000000) {
 			flag = true;
 		} else {
 			flag = false;
-			throw new ValidationException("Income should be less than 10000000");
+			throw new ApplicationException("Income should be less than 10000000");
 		}
 		return flag;
 	}
@@ -234,55 +217,54 @@ public class CustomerService {
 			}
 			if ((creditScore > 700) && (income > 20000) && (age > 18 && age <= 60)) {
 				switch (loanDesc) {
-					case "GOLD":
-						maxLoanAmount = (income *12) * 3;
-						break;
-					case "CAR":
-						maxLoanAmount = (income*12) * 4;
-						break;
-					case "PERSONAL":
-						maxLoanAmount = income * 12 * 3;
-						break;
-					case "HOME ":
-						maxLoanAmount = income*12 * 20;
-						break;
+				case "GOLD":
+					maxLoanAmount = (income * 12) * 3;
+					break;
+				case "CAR":
+					maxLoanAmount = (income * 12) * 4;
+					break;
+				case "PERSONAL":
+					maxLoanAmount = income * 12 * 3;
+					break;
+				case "HOME ":
+					maxLoanAmount = income * 12 * 20;
+					break;
 
-					case "EDUCATIONAL":
-						maxLoanAmount = 8000000;
-						break;
+				case "EDUCATIONAL":
+					maxLoanAmount = 8000000;
+					break;
 				}
-			}
-			else {
+			} else {
 				throw new ApplicationException("Customer is not eligible for loan");
-		}
+			}
 			sanction.setROI(roi);
-			if(customer.getGender().equalsIgnoreCase("Female")&& customer.getAge()<40){
-				sanction.setROI(sanction.getROI()- 0.05);
+			if (customer.getGender().equalsIgnoreCase("Female") && customer.getAge() < 40) {
+				sanction.setROI(sanction.getROI() - 0.05);
 			}
-			if(customer.getCreditScore() > 800){
-				sanction.setROI(sanction.getROI()- 0.02);
-			}else if(customer.getCreditScore() >850){
-				sanction.setROI(sanction.getROI()- 0.03);
+			if (customer.getCreditScore() > 800) {
+				sanction.setROI(sanction.getROI() - 0.02);
+			} else if (customer.getCreditScore() > 850) {
+				sanction.setROI(sanction.getROI() - 0.03);
 			}
-			if(loanRequirement < maxLoanAmount){
+			if (loanRequirement < maxLoanAmount) {
 				sanction.setLoanAmount(loanRequirement);
-			}else if(loanRequirement > maxLoanAmount){
+			} else if (loanRequirement > maxLoanAmount) {
 				throw new ApplicationException("Customer is not eligible for loan");
 			}
-				sanction.setCustomer(customer);
-				sanction.setLoan(loan);
-				sanction.setCreateDttm(new Date());
-				sanction.setStatus('A');
-				sanctionRepository.save(sanction);
+			sanction.setCustomer(customer);
+			sanction.setLoan(loan);
+			sanction.setCreateDttm(new Date());
+			sanction.setStatus('A');
+			sanctionRepository.save(sanction);
 
-				SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
-				return sanctionVO;
+			SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
+			return sanctionVO;
 
 		}
 	}
 
-	public SanctionDTO convertTOSanctionVO(Sanction sanction){
-		SanctionDTO sanctionVO= new SanctionDTO();
+	public SanctionDTO convertTOSanctionVO(Sanction sanction) {
+		SanctionDTO sanctionVO = new SanctionDTO();
 		sanctionVO.setLoanAmount(sanction.getLoanAmount());
 		sanctionVO.setRoi(sanction.getROI());
 		sanctionVO.setLoanType(sanction.getLoan().getLoanType().getLoanDescription());

@@ -1,6 +1,8 @@
 package com.finance.loanadvisor.customer;
 
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
+
+
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Loan;
@@ -29,6 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+/**
+ * @author priypawa This class includes all test cases of
+ *         {@link CustomerService} by mocking {@link CustomerRepository},
+ *         {@link LoanRepository}, {@link SanctionRepository}
+ *
+ */
 @SpringBootTest
 class CustomerServiceTest {
 
@@ -51,15 +59,15 @@ class CustomerServiceTest {
 
 	private Customer customer;
 
-	private  CustomerDTO customerDTO;
+	private CustomerDTO customerDTO;
 
 	private com.finance.loanadvisor.Sanction.dto.SanctionDTO sanctionDTO;
 	private Loan loan;
 
-	private static final int DEFAULT_ID = 0;
-
-	private static final char STATUS = 'A';
-
+	/**
+	 * This method will initialize {@link Customer} object to below parameters and
+	 * execute before each test case.
+	 */
 	@BeforeEach
 	void initCustomerObject() {
 		customer = new Customer();
@@ -82,8 +90,12 @@ class CustomerServiceTest {
 		customer.setCreatedBy(DEFAULT_ID);
 	}
 
+	/**
+	 * This method will initialize {@link CustomerDTO} object to below parameters
+	 * and execute before each test case.
+	 */
 	@BeforeEach
-	void initCustomerVO() {
+	void initCustomerDTO() {
 		customerDTO = new CustomerDTO();
 		customerDTO.setCustomerId(10);
 		customerDTO.setFirstName("Pooja");
@@ -95,26 +107,39 @@ class CustomerServiceTest {
 
 	}
 
+	/**
+	 * This method will initialize {@link LoanType} object to below parameters and
+	 * execute before each test case.
+	 */
 	@BeforeEach
-	void initLoan(){
-		LoanType loanType= new LoanType();
+	void initLoan() {
+		LoanType loanType = new LoanType();
 		loanType.setLoanDescription("EDUCATIONAL");
 		loan = new Loan();
-        loan.setLoanId(5);
+		loan.setLoanId(5);
 		loan.setROI(8.50);
 		loan.setLoanType(loanType);
 
 	}
 
+	/**
+	 * This method will initialize {@link SanctionDTO} object to below parameters
+	 * and execute before each test case.
+	 */
 	@BeforeEach
-	void initSanctionDTO(){
-		sanctionDTO=new SanctionDTO();
+	void initSanctionDTO() {
+		sanctionDTO = new SanctionDTO();
 		sanctionDTO.setRoi(8.50);
 		sanctionDTO.setLoanAmount(30000.0);
 		sanctionDTO.setLoanType("EDUCATIONAL");
 
 	}
 
+	/**
+	 * This method test getAllCustomer of {@link CustomerService} and return
+	 * {@link List} of {@link CustomerDTO} based on status Checks assertNotNull and
+	 * assertEquals methods.
+	 */
 	@Test
 	@DisplayName("Test Customer List --Success")
 	void testGetAllCustomersValid() {
@@ -123,18 +148,25 @@ class CustomerServiceTest {
 		savedCustomerList.add(customer);
 		savedCustomerDTOList.add(customerDTO);
 		Mockito.when(customerRepository.findAllByStatus(STATUS)).thenReturn(savedCustomerList);
-		List<CustomerDTO> customerVOList = customerService.getAllCustomers();
-		Assertions.assertNotNull(customerVOList);
-		Assertions.assertEquals(savedCustomerDTOList, customerVOList);
+		List<CustomerDTO> customerDTOList = customerService.getAllCustomers();
+		Assertions.assertNotNull(customerDTOList);
+		Assertions.assertEquals(savedCustomerDTOList, customerDTOList);
 	}
 
+	/**
+	 * This method test getAllCustomer of {@link CustomerService} by mocking empty
+	 * {@link List} of {@link CustomerDTO} based on status. Checks assertEquals
+	 * methods.
+	 *
+	 * @throws ApplicationException with error message.
+	 */
 	@Test
 	@DisplayName("Test Customer List --Not Found")
 	void testGetAllCustomersInvalid() {
 		List<Customer> savedCustomerList = new ArrayList<>();
 		Mockito.when(customerRepository.findAllByStatus(STATUS)).thenReturn(savedCustomerList);
-		Throwable exception = assertThrows(DataNotFoundException.class,()->{
-	    customerService.getAllCustomers();
+		Throwable exception = assertThrows(ApplicationException.class, () -> {
+			customerService.getAllCustomers();
 
 		});
 
@@ -142,6 +174,11 @@ class CustomerServiceTest {
 
 	}
 
+	/**
+	 * This method test getCustomer of {@link CustomerService} by taking input as
+	 * customerId and return {@link CustomerDTO} object. Checks assertTrue and
+	 * assertEquals methods.
+	 */
 	@Test
 	@DisplayName("Test Get Customer --Success")
 	void testGetCustomerValid() {
@@ -151,55 +188,73 @@ class CustomerServiceTest {
 		Assertions.assertEquals(customerDTO, customerInfo.get());
 	}
 
+	/**
+	 * This method test getCustomer of {@link CustomerService} by taking input as
+	 * customerId and return empty {@link CustomerDTO}. Checks assertEquals methods.
+	 *
+	 * @throws ApplicationException with error message.
+	 */
 	@Test
 	@DisplayName("Test Get Customer --Not Found")
-	void testGetCustomerInvalid() throws DataNotFoundException {
-		  doReturn(Optional.empty()).when(customerRepository).findById(10);
-		  Throwable exception = assertThrows(DataNotFoundException.class,()->{
-			  Optional.of(customerService.getCustomer(10));
+	void testGetCustomerInvalid() {
+		doReturn(Optional.empty()).when(customerRepository).findById(10);
+		Throwable exception = assertThrows(ApplicationException.class, () -> {
+			Optional.of(customerService.getCustomer(10));
 
-			});
-		  Assertions.assertEquals(CUSTOMER_NOT_FOUND, exception.getMessage());
-
+		});
+		Assertions.assertEquals(CUSTOMER_NOT_FOUND, exception.getMessage());
 
 	}
 
-
+	/**
+	 * This method test addCustomer of {@link CustomerService} by taking input as
+	 * {@link Customer} and return {@link CustomerDTO} object. It mocks findByEmail
+	 * method of repository and empty {@link Customer} object. Checks assertNotNull
+	 * method.
+	 */
 	@Test
 	@DisplayName("Test Add Customer --Success")
 	void testAddCustomerValid() {
 		Customer savedCustomer = null;
 		when(customerRepository.findByEmail("poojapatil@gmail.com")).thenReturn(savedCustomer);
 		when(customerRepository.save(customer)).thenReturn(customer);
-		CustomerDTO customerVOInfo = customerService.addCustomer(customer);
-		Assertions.assertNotNull(customerVOInfo);
-		
+		CustomerDTO customerDTOInfo = customerService.addCustomer(customer);
+		Assertions.assertNotNull(customerDTOInfo);
+
 	}
 
-
+	/**
+	 * This method test addCustomer of {@link CustomerService} by taking input as
+	 * {@link Customer} and return {@link CustomerDTO} object. It mocks findByEmail
+	 * method of repository and {@link Customer} object. Checks assertEquals
+	 * methods.
+	 *
+	 * @throws ApplicationException with error message.
+	 */
 	@Test
 	@DisplayName("Test Add Customer --Not Found")
-	void testAddCustomerInvalid() throws DataNotFoundException{
+	void testAddCustomerInvalid() {
 		when(customerRepository.findByEmail("poojapatil@gmail.com")).thenReturn(customer);
 		when(customerRepository.save(customer)).thenReturn(customer);
-		  Throwable exception = assertThrows(DataNotFoundException.class,()->{
-		   customerService.addCustomer(customer);
-		  });
-		  Assertions.assertEquals(CUSTOMER_IS_ALREADY_CREATED, exception.getMessage());
+		Throwable exception = assertThrows(ApplicationException.class, () -> {
+			customerService.addCustomer(customer);
+		});
+		Assertions.assertEquals(CUSTOMER_IS_ALREADY_CREATED, exception.getMessage());
 	}
+
 	@Test
 	@DisplayName("TEST GET Customer after Sanction ")
 	void testCustomerLoanEligibilityValid(){
 		customer.setLoanRequirement(30000);
 		customer.setGender("Male");
-		Sanction sanction = new Sanction(1,customer,loan,30000.0,8.50,'A',null,null,null,null);
+		Sanction sanction = new Sanction(1, customer, loan, 30000.0, 8.50, 'A', null, null, null, null);
 		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
 		when(loanRepository.findById(5)).thenReturn(Optional.of(loan));
 		when(sanctionRepository.save(sanction)).thenReturn(sanction);
 		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10,5);
         Assertions.assertNotNull(customer);
 		Assertions.assertNotNull(loan);
-		Assertions.assertEquals(30000.0,sanctionDTO.getLoanAmount());
+		Assertions.assertEquals(30000.0, sanctionDTO.getLoanAmount());
 	}
 
 	@Test
