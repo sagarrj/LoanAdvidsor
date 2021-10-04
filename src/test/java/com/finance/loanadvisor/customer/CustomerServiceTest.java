@@ -9,6 +9,7 @@ import com.finance.loanadvisor.entities.Sanction;
 import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
+import com.finance.loanadvisor.exception.ApplicationException;
 import com.finance.loanadvisor.exception.DataNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ class CustomerServiceTest {
 
 	private static final String CUSTOMER_IS_ALREADY_CREATED = "Customer is already created";
 	private static final String CUSTOMER_NOT_FOUND = "Customer not found";
-
+    private static final String LOAN_NOT_FOUND= "Loan Details not found";
 	@MockBean
 	CustomerRepository customerRepository;
 
@@ -187,19 +188,40 @@ class CustomerServiceTest {
 		  Assertions.assertEquals(CUSTOMER_IS_ALREADY_CREATED, exception.getMessage());
 	}
 	@Test
-	@DisplayName("Test Customer's Eligibility ")
-	void testCustomerLoanEligibility(){
+	@DisplayName("TEST GET Customer after Sanction ")
+	void testCustomerLoanEligibilityValid(){
 		customer.setLoanRequirement(30000);
 		customer.setGender("Male");
 		Sanction sanction = new Sanction(1,customer,loan,30000.0,8.50,'A',null,null,null,null);
 		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
 		when(loanRepository.findById(5)).thenReturn(Optional.of(loan));
 		when(sanctionRepository.save(sanction)).thenReturn(sanction);
-		when(customerRepository.save(customer)).thenReturn(customer);
 		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10,5);
         Assertions.assertNotNull(customer);
 		Assertions.assertNotNull(loan);
 		Assertions.assertEquals(30000.0,sanctionDTO.getLoanAmount());
 	}
 
+	@Test
+	@DisplayName("TEST GET Customer --NOT FOUND")
+	void testCustomerEligibilityInvalid() throws ApplicationException {
+		doReturn(Optional.empty()).when(customerRepository).findById(10);
+		Throwable exception = assertThrows(ApplicationException.class,()->{
+			Optional.of(customerService.customerLoanEligibility(10,5));
+		});
+		Assertions.assertEquals(CUSTOMER_NOT_FOUND, exception.getMessage());
+
+	}
+
+	@Test
+	@DisplayName("TEST GET Loan--NOT FOUND")
+	void testCustomerLoanEligibilityInvalid() throws ApplicationException {
+		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
+		doReturn(Optional.empty()).when(loanRepository).findById(5);
+		Throwable exception = assertThrows(ApplicationException.class,()->{
+			Optional.of(customerService.customerLoanEligibility(10,5));
+		});
+		Assertions.assertEquals(LOAN_NOT_FOUND, exception.getMessage());
+
+	}
 }

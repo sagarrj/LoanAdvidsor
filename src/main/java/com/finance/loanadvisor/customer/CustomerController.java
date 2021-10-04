@@ -4,6 +4,7 @@ import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Sanction;
+import com.finance.loanadvisor.exception.ApplicationException;
 import com.finance.loanadvisor.exception.DataNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +101,7 @@ public class CustomerController {
 	 * @return {@link ResponseEntity} of {@link SanctionDTO}
 	 */
 	@GetMapping("/sanction/{customerId}/{loanId}")
-	public ResponseEntity<SanctionDTO> loanEligibility(@PathVariable("customerId") Integer customerId,
-			@PathVariable("loanId") Integer loanId) {
+	public ResponseEntity<SanctionDTO> loanEligibility(@PathVariable("customerId") Integer customerId, @PathVariable("loanId") Integer loanId) throws ApplicationException {
 		SanctionDTO sanctionInfo = customerService.customerLoanEligibility(customerId, loanId);
 		return new ResponseEntity<SanctionDTO>(sanctionInfo, HttpStatus.OK);
 	}

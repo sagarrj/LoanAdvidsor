@@ -2,8 +2,11 @@ package com.finance.loanadvisor.customer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
+import com.finance.loanadvisor.entities.Loan;
+import com.finance.loanadvisor.entities.LoanType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -33,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser(username="admin")
 class CustomerControllerTest {
 
 
@@ -43,6 +48,8 @@ class CustomerControllerTest {
 	private MockMvc mockMvc;
 	private Customer customer;
 	private CustomerDTO customerVO;
+	private Loan loan;
+	private SanctionDTO sanctionDTO;
 
 	private static final int DEFAULT_ID = 0;
 
@@ -82,6 +89,28 @@ class CustomerControllerTest {
 		customerVO.setIncome(70000);
 
 	}
+
+	@BeforeEach
+	void initLoan(){
+		LoanType loanType= new LoanType();
+		loanType.setLoanDescription("EDUCATIONAL");
+		loan = new Loan();
+		loan.setLoanId(5);
+		loan.setROI(8.50);
+		loan.setLoanType(loanType);
+
+	}
+
+	@BeforeEach
+	void initSanctionDTO(){
+		sanctionDTO=new SanctionDTO();
+		sanctionDTO.setRoi(8.50);
+		sanctionDTO.setLoanAmount(30000.0);
+		sanctionDTO.setLoanType("EDUCATIONAL");
+
+	}
+
+
 
 	/**
 	 * This method tests status, mediaType and {@link List} of {@link Customer} of
@@ -137,6 +166,8 @@ class CustomerControllerTest {
 
 	}
 
+
+
 	@Test
 	@DisplayName("Test POST /add --Success")
 	void testAddCustomerValid() throws Exception {
@@ -160,6 +191,31 @@ class CustomerControllerTest {
 				post("/customer/add").contentType(MediaType.APPLICATION_JSON).content(asJsonString(savedCustomerVO)))
 				.andExpect(status().isNotFound());
 	}
+
+	@Test
+	@DisplayName("Test GET/--Sanction")
+	void testGetLoanEligibilityValid() throws Exception {
+
+		doReturn(sanctionDTO).when(customerService).customerLoanEligibility(10,5);
+		String url = "/customer/sanction/10/5";
+        mockMvc.perform(get(url))
+				//validate status and media type
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("roi", is(8.50))).andExpect(jsonPath("loanAmount",is(30000.0)))
+				.andExpect(jsonPath("loanType",is("EDUCATIONAL")));
+		Assertions.assertNotNull(sanctionDTO);
+
+	}
+
+	@Test
+	@DisplayName("Test GET/--Sanction NOT FOUND")
+	void testGetLoanEligibilityInvalid() throws Exception{
+		doReturn(sanctionDTO).when(customerService).customerLoanEligibility(-2,3);
+		mockMvc.perform(get("/customer/sanction/customerId/loanId",-2,3))
+				.andExpect(status().isBadRequest());
+	}
+
+
 
 	static String asJsonString(Object obj) {
 		try {
