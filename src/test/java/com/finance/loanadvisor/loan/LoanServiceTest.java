@@ -184,7 +184,7 @@ public class LoanServiceTest {
 		Throwable exception = assertThrows(ApplicationException.class,
 				() -> loanService.registerCustomerForLoan(registerRequest));
 
-		Assertions.assertEquals(ApplicationConstants.CUSTOMER_SANCTION_NOT_FOUND, exception.getMessage());
+		Assertions.assertEquals(ApplicationConstants.SANCTION_NOT_FOUND, exception.getMessage());
 
 	}
 

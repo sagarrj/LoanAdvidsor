@@ -1,8 +1,6 @@
 package com.finance.loanadvisor.customer;
 
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
-
-
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Loan;
