@@ -20,12 +20,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -134,10 +136,13 @@ class CustomerControllerTest {
 		List<CustomerDTO> savedCustomerDTOList = new ArrayList<>();
 		savedCustomerDTOList.add(customerDTO);
 		doReturn(savedCustomerDTOList).when(customerService).getAllCustomers();
-		mockMvc.perform(get("/customer/list"))
+		MvcResult result = mockMvc.perform(get("/customer/list"))
 				// Validate status and mediaType
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
-		Assertions.assertFalse(savedCustomerDTOList.isEmpty());
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+		        .andReturn();
+		String content = result.getResponse().getContentAsString();
+		assertThat(content).isEqualTo(asJsonString(savedCustomerDTOList));
 	}
 
 	/**
@@ -163,7 +168,6 @@ class CustomerControllerTest {
 	 * This method tests addCustomer method by accepting  {@link Customer}
 	 * object and checks status and media type of object.
 	 *
-	 *  Checks assertNotNull
 	 */
 
 	@Test
@@ -172,15 +176,22 @@ class CustomerControllerTest {
 		Customer savedCustomer = new Customer(10, "Pooja", "Patil", "Pune", "Female", "poojapatil@gmail.com", 31,
 				"8122459560", 70000, "211088234504", "ZBDKE7723K", 30000, 400000);
 		doReturn(customerDTO).when(customerService).addCustomer((ArgumentMatchers.any()));
-		mockMvc.perform(
+		MvcResult result = mockMvc.perform(
 				post("/customer/add").contentType(MediaType.APPLICATION_JSON).content(asJsonString(savedCustomer)))
 				.andDo(print())
 				// Validate status and mediaType
-				.andExpect(status().is(201)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("customerId", is(10))).andExpect(jsonPath("firstName", is("Pooja")))
-				.andExpect(jsonPath("lastName", is("Patil"))).andExpect(jsonPath("email", is("poojapatil@gmail.com")))
-				.andExpect(jsonPath("age", is(31))).andExpect(jsonPath("income", is(70000)));
-		Assertions.assertNotNull(customerDTO);
+				.andExpect(status().is(201))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("customerId", is(10)))
+				.andExpect(jsonPath("firstName", is("Pooja")))
+				.andExpect(jsonPath("lastName", is("Patil")))
+				.andExpect(jsonPath("email", is("poojapatil@gmail.com")))
+				.andExpect(jsonPath("age", is(31)))
+				.andExpect(jsonPath("income", is(70000)))
+				 .andReturn();
+		String content = result.getResponse().getContentAsString();
+		assertThat(content).isEqualTo(asJsonString(customerDTO));
+
 	}
 
 	/**
@@ -208,13 +219,20 @@ class CustomerControllerTest {
 	@DisplayName("Test GET /view --Success")
 	void testGetCustomerValid() throws Exception {
 		doReturn(customerDTO).when(customerService).getCustomer(10);
-		mockMvc.perform(get("/customer/view/{id}", 10))
+		MvcResult result = mockMvc.perform(get("/customer/view/{id}", 10))
 				// Validate status and mediaType
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("customerId", is(10))).andExpect(jsonPath("firstName", is("Pooja")))
-				.andExpect(jsonPath("lastName", is("Patil"))).andExpect(jsonPath("email", is("poojapatil@gmail.com")))
-				.andExpect(jsonPath("age", is(31))).andExpect(jsonPath("income", is(70000)));
-		Assertions.assertNotNull(customerDTO);
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("customerId", is(10)))
+				.andExpect(jsonPath("firstName", is("Pooja")))
+				.andExpect(jsonPath("lastName", is("Patil")))
+				.andExpect(jsonPath("email", is("poojapatil@gmail.com")))
+				.andExpect(jsonPath("age", is(31)))
+				.andExpect(jsonPath("income", is(70000)))
+				.andReturn();
+		String content = result.getResponse().getContentAsString();
+		assertThat(content).isEqualTo(asJsonString(customerDTO));
+
 
 	}
 
@@ -229,7 +247,8 @@ class CustomerControllerTest {
 	void testGetCustomerInvalid() throws Exception {
 		CustomerDTO customerDTO = new CustomerDTO();
 		doReturn(customerDTO).when(customerService).getCustomer(10);
-		mockMvc.perform(get("/customer/view/{id}", 1)).andDo(print()).andExpect(status().isNotFound());
+		mockMvc.perform(get("/customer/view/{id}", 1))
+		.andDo(print()).andExpect(status().isNotFound());
 
 	}
 
