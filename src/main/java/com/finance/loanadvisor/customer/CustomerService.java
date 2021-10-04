@@ -10,7 +10,6 @@ import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
 import com.finance.loanadvisor.exception.ApplicationException;
-import com.finance.loanadvisor.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -185,10 +184,11 @@ public class CustomerService {
 	 * @throws ApplicationException
 	 */
 
-	public SanctionDTO customerLoanEligibility(int customerId, int loanId) {
+	public SanctionDTO customerLoanEligibility(int customerId, int loanId) throws ApplicationException{
 		if (customerId < 1 && loanId < 1) {
-			throw new DataNotFoundException("CustomerId and LoanId should not be less then one");
-		} else {
+			throw new ApplicationException("CustomerId and LoanId should not be less then one");
+		}
+		else {
 			Customer customer = customerRepository.findById(customerId).orElse(null);
 			Loan loan = loanRepository.findById(loanId).orElse(null);
 
@@ -206,13 +206,13 @@ public class CustomerService {
 				creditScore = customer.getCreditScore();
 				loanRequirement = customer.getLoanRequirement();
 			} else {
-				throw new DataNotFoundException("Customer not found");
+				throw new ApplicationException("Customer not found");
 			}
 			if (loan != null) {
 				roi = loan.getROI();
 				loanDesc = loan.getLoanType().getLoanDescription();
 			} else {
-				throw new DataNotFoundException("Rate of Interest not found");
+				throw new ApplicationException("Loan Details not found");
 			}
 			if ((creditScore > 700) && (income > 20000) && (age > 18 && age <= 60)) {
 				switch (loanDesc) {

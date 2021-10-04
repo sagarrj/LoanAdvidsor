@@ -3,10 +3,11 @@ package com.finance.loanadvisor.customer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
-
-import org.hibernate.annotations.NotFound;
+import com.finance.loanadvisor.entities.Loan;
+import com.finance.loanadvisor.entities.LoanType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(username = "admin")
+@WithMockUser(username="admin")
 class CustomerControllerTest {
 
 	@MockBean
@@ -49,6 +50,8 @@ class CustomerControllerTest {
 	private MockMvc mockMvc;
 	private Customer customer;
 	private CustomerDTO customerDTO;
+	private Loan loan;
+	private SanctionDTO sanctionDTO;
 
 	private static final int DEFAULT_ID = 0;
 
@@ -96,6 +99,28 @@ class CustomerControllerTest {
 
 	}
 
+	@BeforeEach
+	void initLoan(){
+		LoanType loanType= new LoanType();
+		loanType.setLoanDescription("EDUCATIONAL");
+		loan = new Loan();
+		loan.setLoanId(5);
+		loan.setROI(8.50);
+		loan.setLoanType(loanType);
+
+	}
+
+	@BeforeEach
+	void initSanctionDTO(){
+		sanctionDTO=new SanctionDTO();
+		sanctionDTO.setRoi(8.50);
+		sanctionDTO.setLoanAmount(30000.0);
+		sanctionDTO.setLoanType("EDUCATIONAL");
+
+	}
+
+
+
 	/**
 	 * This method tests status, mediaType and {@link List} of {@link Customer} of
 	 * getAllCustomer method {@link CustomerController} by mocking
@@ -119,7 +144,7 @@ class CustomerControllerTest {
 	 * This method tests status and {@link List} of {@link Customer} of
 	 * getAllCustomer method {@link CustomerController} and return empty list which
 	 * is giving status {@link NotFound}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -135,11 +160,12 @@ class CustomerControllerTest {
 	}
 
 	/**
-	 * This method tests addCustomer method by accepting {@link Customer} object.
-	 * Checks status and media type of response {@link CustomerDTO}
-	 * 
-	 * @throws Exception
+	 * This method tests addCustomer method by accepting  {@link Customer}
+	 * object and checks status and media type of object.
+	 *
+	 *  Checks assertNotNull
 	 */
+
 	@Test
 	@DisplayName("Test POST /add --Success")
 	void testAddCustomerValid() throws Exception {
@@ -160,7 +186,7 @@ class CustomerControllerTest {
 	/**
 	 * This method tests addCustomer method by accepting empty {@link Customer}
 	 * object which is why it's giving {@link BadRequest} status.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -175,7 +201,7 @@ class CustomerControllerTest {
 	/**
 	 * This method tests getCustomer method by accepting customerId and return
 	 * {@link CustomerDTO} object. Checks status and media type of response.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -195,7 +221,7 @@ class CustomerControllerTest {
 	/**
 	 * This method tests getCustomer method by accepting customerId and return empty
 	 * {@link CustomerDTO} object. Checks status as {@link NotFound}
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -206,6 +232,31 @@ class CustomerControllerTest {
 		mockMvc.perform(get("/customer/view/{id}", 1)).andDo(print()).andExpect(status().isNotFound());
 
 	}
+
+	@Test
+	@DisplayName("Test GET/--Sanction")
+	void testGetLoanEligibilityValid() throws Exception {
+
+		doReturn(sanctionDTO).when(customerService).customerLoanEligibility(10,5);
+		String url = "/customer/sanction/10/5";
+        mockMvc.perform(get(url))
+				//validate status and media type
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("roi", is(8.50))).andExpect(jsonPath("loanAmount",is(30000.0)))
+				.andExpect(jsonPath("loanType",is("EDUCATIONAL")));
+		Assertions.assertNotNull(sanctionDTO);
+
+	}
+
+	@Test
+	@DisplayName("Test GET/--Sanction NOT FOUND")
+	void testGetLoanEligibilityInvalid() throws Exception{
+		doReturn(sanctionDTO).when(customerService).customerLoanEligibility(-2,3);
+		mockMvc.perform(get("/customer/sanction/customerId/loanId",-2,3))
+				.andExpect(status().isBadRequest());
+	}
+
+
 
 	static String asJsonString(Object obj) {
 		try {

@@ -43,11 +43,11 @@ class CustomerServiceTest {
 
 	private static final String CUSTOMER_IS_ALREADY_CREATED = "Customer is already created";
 	private static final String CUSTOMER_NOT_FOUND = "Customer not found";
-
+    private static final String LOAN_NOT_FOUND= "Loan Details not found";
 	private static final int DEFAULT_ID = 0;
 
 	private static final char STATUS = 'A';
-	@MockBean
+    @MockBean
 	CustomerRepository customerRepository;
 
 	@MockBean
@@ -159,7 +159,7 @@ class CustomerServiceTest {
 	 * This method test getAllCustomer of {@link CustomerService} by mocking empty
 	 * {@link List} of {@link CustomerDTO} based on status. Checks assertEquals
 	 * methods.
-	 * 
+	 *
 	 * @throws ApplicationException with error message.
 	 */
 	@Test
@@ -193,7 +193,7 @@ class CustomerServiceTest {
 	/**
 	 * This method test getCustomer of {@link CustomerService} by taking input as
 	 * customerId and return empty {@link CustomerDTO}. Checks assertEquals methods.
-	 * 
+	 *
 	 * @throws ApplicationException with error message.
 	 */
 	@Test
@@ -230,7 +230,7 @@ class CustomerServiceTest {
 	 * {@link Customer} and return {@link CustomerDTO} object. It mocks findByEmail
 	 * method of repository and {@link Customer} object. Checks assertEquals
 	 * methods.
-	 * 
+	 *
 	 * @throws ApplicationException with error message.
 	 */
 	@Test
@@ -245,19 +245,40 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	@DisplayName("Test Customer's Eligibility ")
-	void testCustomerLoanEligibility() {
+	@DisplayName("TEST GET Customer after Sanction ")
+	void testCustomerLoanEligibilityValid(){
 		customer.setLoanRequirement(30000);
 		customer.setGender("Male");
 		Sanction sanction = new Sanction(1, customer, loan, 30000.0, 8.50, 'A', null, null, null, null);
 		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
 		when(loanRepository.findById(5)).thenReturn(Optional.of(loan));
 		when(sanctionRepository.save(sanction)).thenReturn(sanction);
-		when(customerRepository.save(customer)).thenReturn(customer);
-		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10, 5);
-		Assertions.assertNotNull(customer);
+		SanctionDTO sanctionDTO = customerService.customerLoanEligibility(10,5);
+        Assertions.assertNotNull(customer);
 		Assertions.assertNotNull(loan);
 		Assertions.assertEquals(30000.0, sanctionDTO.getLoanAmount());
 	}
 
+	@Test
+	@DisplayName("TEST GET Customer --NOT FOUND")
+	void testCustomerEligibilityInvalid() throws ApplicationException {
+		doReturn(Optional.empty()).when(customerRepository).findById(10);
+		Throwable exception = assertThrows(ApplicationException.class,()->{
+			Optional.of(customerService.customerLoanEligibility(10,5));
+		});
+		Assertions.assertEquals(CUSTOMER_NOT_FOUND, exception.getMessage());
+
+	}
+
+	@Test
+	@DisplayName("TEST GET Loan--NOT FOUND")
+	void testCustomerLoanEligibilityInvalid() throws ApplicationException {
+		when(customerRepository.findById(10)).thenReturn(Optional.of(customer));
+		doReturn(Optional.empty()).when(loanRepository).findById(5);
+		Throwable exception = assertThrows(ApplicationException.class,()->{
+			Optional.of(customerService.customerLoanEligibility(10,5));
+		});
+		Assertions.assertEquals(LOAN_NOT_FOUND, exception.getMessage());
+
+	}
 }
