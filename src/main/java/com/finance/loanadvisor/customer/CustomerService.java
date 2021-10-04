@@ -56,7 +56,7 @@ public class CustomerService {
 			throw new ApplicationException(CUSTOMER_IS_ALREADY_CREATED);
 		}
 		if (validateCustomerData(customer)) {
-			customer.setCreditScore((int) (Math.random() * 100));
+			customer.setCreditScore((int) (Math.random() * 1000));
 			customer.setStatus(STATUS);
 			customer.setCreateDttm(new Date());
 			customer.setCreatedBy(DEFAULT_ID);
