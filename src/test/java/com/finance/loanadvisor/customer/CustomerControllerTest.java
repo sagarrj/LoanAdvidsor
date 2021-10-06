@@ -49,7 +49,7 @@ class CustomerControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	private Customer customer;
-	private CustomerDTO customerVO;
+	private CustomerDTO customerDTO;
 	private Loan loan;
 	private SanctionDTO sanctionDTO;
 
@@ -159,32 +159,6 @@ class CustomerControllerTest {
 
 	}
 
-	@Test
-	@DisplayName("Test GET /view --Success")
-	void testGetCustomerValid() throws Exception {
-		doReturn(customerVO).when(customerService).getCustomer(10);
-		mockMvc.perform(get("/customer/view/{id}", 10))
-				// Validate status and mediaType
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("customerId", is(10))).andExpect(jsonPath("firstName", is("Pooja")))
-				.andExpect(jsonPath("lastName", is("Patil"))).andExpect(jsonPath("email", is("poojapatil@gmail.com")))
-				.andExpect(jsonPath("age", is(31))).andExpect(jsonPath("income", is(70000)))
-				.andExpect(jsonPath("creditScore", is(900)));
-		 Assertions.assertNotNull(customerVO);
-
-	}
-	
-	@Test
-	@DisplayName("Test GET /view --Not Found")
-	void testGetCustomerInvalid() throws Exception {
-		CustomerDTO customerVO = new CustomerDTO();
-		doReturn(customerVO).when(customerService).getCustomer(10);
-		 mockMvc.perform(get("/customer/view/{id}",1))
-	        .andExpect(status().isNotFound());
-
-	}
-
-
 
 	@Test
 	@DisplayName("Test POST /add --Success")
@@ -253,6 +227,12 @@ class CustomerControllerTest {
 
 	}
 
+	/**
+	 * This method tests getloanEligibility method by accepting customerId and  loanID return
+	 * {@link SanctionDTO} object.
+	 *
+	 * @throws Exception
+	 */
 	@Test
 	@DisplayName("Test GET/--Sanction")
 	void testGetLoanEligibilityValid() throws Exception {
@@ -268,6 +248,12 @@ class CustomerControllerTest {
 
 	}
 
+	/**
+	 * This method tests getloanEligibility method by accepting customerId and return empty
+	 * {@link SanctionDTO} object. Checks status as {@link NotFound}
+	 *
+	 * @throws Exception
+	 */
 	@Test
 	@DisplayName("Test GET/--Sanction NOT FOUND")
 	void testGetLoanEligibilityInvalid() throws Exception{

@@ -1,5 +1,7 @@
 package com.finance.loanadvisor.customer;
 
+import com.finance.loanadvisor.Sanction.dto.CusomerSanctionDTO;
+import com.finance.loanadvisor.Sanction.dto.CustomerDetailsDTO;
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 
 
@@ -109,5 +111,12 @@ public class CustomerController {
 		SanctionDTO sanctionInfo = customerService.customerLoanEligibility(customerId, loanId);
 		return new ResponseEntity<SanctionDTO>(sanctionInfo, HttpStatus.OK);
 	}
+
+//	@PostMapping("/customerDetails")
+//	public ResponseEntity<CusomerSanctionDTO> customerLoanDetails(@RequestBody CustomerDetailsDTO customerDetailsDTO){
+//
+//		//CusomerSanctionDTO cusomerSanctionDTO = customerService.
+//		return new ResponseEntity<CusomerSanctionDTO>(cusomerSanctionDTO, HttpStatus.OK);
+//	}
 
 }

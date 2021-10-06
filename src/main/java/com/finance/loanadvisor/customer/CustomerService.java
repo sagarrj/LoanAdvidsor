@@ -1,5 +1,6 @@
 package com.finance.loanadvisor.customer;
 
+import com.finance.loanadvisor.Sanction.dto.CustomerLoanSanctionDTO;
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
@@ -10,7 +11,6 @@ import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
 import com.finance.loanadvisor.exception.ApplicationException;
-import com.finance.loanadvisor.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class CustomerService {
 			throw new ApplicationException(CUSTOMER_IS_ALREADY_CREATED);
 		}
 		if (validateCustomerData(customer)) {
-			customer.setCreditScore((int) (Math.random() * 100));
+			customer.setCreditScore((int) (Math.random() * 1000));
 			customer.setStatus(STATUS);
 			customer.setCreateDttm(new Date());
 			customer.setCreatedBy(DEFAULT_ID);
@@ -97,7 +97,7 @@ public class CustomerService {
 
 	/**
 	 * This method returns list of all available customers
-	 * 
+	 *
 	 * @return {@link List} of {@link CustomerDTO}
 	 * @throws ApplicationException
 	 */
@@ -115,7 +115,7 @@ public class CustomerService {
 	/**
 	 * This method converts List {@link Customer} into {@link List} of
 	 * {@link CustomerDTO}
-	 * 
+	 *
 	 * @param customerList : {@link Customer}
 	 * @return customerVOList: {@link List} of {@link CustomerDTO}
 	 */
@@ -130,7 +130,7 @@ public class CustomerService {
 	/**
 	 * This method maps properties of {@link Customer} object to {@link CustomerDTO}
 	 * object using {@link ModelMapper}
-	 * 
+	 *
 	 * @param customer : {@link Customer}
 	 * @return customerDTO : {@link CustomerDTO}
 	 */
@@ -144,7 +144,7 @@ public class CustomerService {
 	/**
 	 * This method validates customer data such as age, income, loan amount, initial
 	 * requirement based on given conditions
-	 * 
+	 *
 	 * @param customer : {@link Customer}
 	 * @return flag : {@link Boolean}
 	 * @throws ApplicationException
@@ -177,6 +177,7 @@ public class CustomerService {
 		}
 		return flag;
 	}
+}
 
 	/**
 	 * This method checks the eligibility of customers for loan and returns the
@@ -184,90 +185,118 @@ public class CustomerService {
 	 * 
 	 * @throws ApplicationException
 	 */
-
-	public SanctionDTO customerLoanEligibility(int customerId, int loanId) throws ApplicationException{
-		if (customerId < 1 && loanId < 1) {
-			throw new ApplicationException("CustomerId and LoanId should not be less then one");
-		}
-		else {
-			Customer customer = customerRepository.findById(customerId).orElse(null);
-			Loan loan = loanRepository.findById(loanId).orElse(null);
-
-			int age = 0;
-			int income = 0;
-			int creditScore = 0;
-			Double roi = 0.0;
-			String loanDesc = null;
-			double maxLoanAmount = 0;
-			double loanRequirement = 0;
-
-			if (customer != null) {
-				age = customer.getAge();
-				income = customer.getIncome();
-				creditScore = customer.getCreditScore();
-				loanRequirement = customer.getLoanRequirement();
-			} else {
-				throw new ApplicationException("Customer not found");
-			}
-			if (loan != null) {
-				roi = loan.getROI();
-				loanDesc = loan.getLoanType().getLoanDescription();
-			} else {
-				throw new ApplicationException("Loan Details not found");
-			}
-			if ((creditScore > 700) && (income > 20000) && (age > 18 && age <= 60)) {
-				switch (loanDesc) {
-				case "GOLD":
-					maxLoanAmount = (income * 12) * 3;
-					break;
-				case "CAR":
-					maxLoanAmount = (income * 12) * 4;
-					break;
-				case "PERSONAL":
-					maxLoanAmount = income * 12 * 3;
-					break;
-				case "HOME ":
-					maxLoanAmount = income * 12 * 20;
-					break;
-
-				case "EDUCATIONAL":
-					maxLoanAmount = 8000000;
-					break;
-				}
-			} else {
-				throw new ApplicationException("Customer is not eligible for loan");
-			}
-			sanction.setROI(roi);
-			if (customer.getGender().equalsIgnoreCase("Female") && customer.getAge() < 40) {
-				sanction.setROI(sanction.getROI() - 0.05);
-			}
-			if (customer.getCreditScore() > 800) {
-				sanction.setROI(sanction.getROI() - 0.02);
-			} else if (customer.getCreditScore() > 850) {
-				sanction.setROI(sanction.getROI() - 0.03);
-			}
-			if (loanRequirement < maxLoanAmount) {
-				sanction.setLoanAmount(loanRequirement);
-			} else if (loanRequirement > maxLoanAmount) {
-				throw new ApplicationException("Customer is not eligible for loan");
-			}
-			sanction.setCustomer(customer);
-			sanction.setLoan(loan);
-			sanction.setCreateDttm(new Date());
-			sanction.setStatus('A');
-			sanctionRepository.save(sanction);
-
-			SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
-			return sanctionVO;
-
-		}
-	}
-
-	public SanctionDTO convertTOSanctionVO(Sanction sanction) {
-		SanctionDTO sanctionVO = new SanctionDTO();
-		sanctionVO.setLoanAmount(sanction.getLoanAmount());
-		sanctionVO.setRoi(sanction.getROI());
-		sanctionVO.setLoanType(sanction.getLoan().getLoanType().getLoanDescription());
-		return sanctionVO;
-	}
-}
+//
+//	public SanctionDTO customerLoanEligibility(int customerId, int loanId) throws ApplicationException{
+//		if (customerId < 1 && loanId < 1) {
+//			throw new ApplicationException("CustomerId and LoanId should not be less then one");
+//		}
+//		else {
+//			Customer customer = customerRepository.findById(customerId).orElse(null);
+//			Loan loan = loanRepository.findById(loanId).orElse(null);
+//
+//			int age = 0;
+//			int income = 0;
+//			int creditScore = 0;
+//			Double roi = 0.0;
+//			String loanDesc = null;
+//			String gender = null;
+//			double maxLoanAmount = 0;
+//			double loanRequirement = 0;
+//			Boolean canGiveLoan =false;
+//
+//			if (customer != null) {
+//				age = customer.getAge();
+//				income = customer.getIncome();
+//				creditScore = customer.getCreditScore();
+//				loanRequirement = customer.getLoanRequirement();
+//				gender =customer.getGender();
+//			} else {
+//				throw new ApplicationException("Customer not found");
+//			}
+//			if (loan != null) {
+//				roi = loan.getROI();
+//				loanDesc = loan.getLoanType().getLoanDescription();
+//			} else {
+//				throw new ApplicationException("Loan Details not found");
+//			}
+//			roi = getNewCustomerLoanEligibility(age, income, creditScore, roi, loanDesc, gender, maxLoanAmount, loanRequirement);
+//			sanction.setCustomer(customer);
+//			sanction.setLoan(loan);
+//			sanction.setROI(roi);
+//			sanction.setLoanAmount(loanRequirement);
+//			sanction.setCreateDttm(new Date());
+//			sanction.setStatus('A');
+//			sanctionRepository.save(sanction);
+//
+//			SanctionDTO sanctionVO = convertTOSanctionVO(sanction);
+//			return sanctionVO;
+//
+//		}
+//	}
+//
+//	private CustomerLoanSanctionDTO getNewCustomerLoanEligibility(int age, int income, int creditScore, Double roi, String loanDesc, String gender, double maxLoanAmount, double loanRequirement) {
+//		Boolean canGiveLoan;
+//		if ((creditScore > 700) && (income > 20000) && (age > 18 && age <= 60)) {
+//			switch (loanDesc) {
+//			case "GOLD":
+//				maxLoanAmount = (income * 12) * 3;
+//				break;
+//			case "CAR":
+//				maxLoanAmount = (income * 12) * 4;
+//				break;
+//			case "PERSONAL":
+//				maxLoanAmount = income * 12 * 3;
+//				break;
+//			case "HOME ":
+//				maxLoanAmount = income * 12 * 20;
+//				break;
+//
+//			case "EDUCATIONAL":
+//				maxLoanAmount = 8000000;
+//				break;
+//			}
+//		} else {
+//			throw new ApplicationException("Customer is not eligible for loan");
+//		}
+//
+//		if (gender.equalsIgnoreCase("Female") && age < 40) {
+//			roi = roi - 0.05;
+//		}
+//		if (creditScore > 800) {
+//			roi = roi - 0.02;
+//		} else if (creditScore > 850) {
+//			roi = roi - 0.03;
+//		}
+//
+//		if (loanRequirement < maxLoanAmount) {
+//			canGiveLoan =true;
+//		} else if (loanRequirement > maxLoanAmount) {
+//			throw new ApplicationException("Customer is not eligible for loan");
+//		}
+//		return convertCustomerLoanSanctionDTO(maxLoanAmount,roi);
+//	}
+//
+////	public <CustomerSanctionDTO> getCustomerForLoan(){
+////
+////	}
+//
+//	public SanctionDTO convertTOSanctionVO(Sanction sanction) {
+//		SanctionDTO sanctionVO = new SanctionDTO();
+//		sanctionVO.setLoanAmount(sanction.getLoanAmount());
+//		sanctionVO.setRoi(sanction.getROI());
+//		sanctionVO.setLoanType(sanction.getLoan().getLoanType().getLoanDescription());
+//		return sanctionVO;
+//	}
+//
+//	public CustomerLoanSanctionDTO convertCustomerLoanSanctionDTO(Customer customer, Loan loan){
+//		CustomerLoanSanctionDTO customerLoanSanctionDTO = new CustomerLoanSanctionDTO();
+//		customerLoanSanctionDTO.setAge(customer.getAge());
+//		customerLoanSanctionDTO.setIncome(customer.getIncome());
+//		customerLoanSanctionDTO.setCreditScore(customer.getCreditScore());
+//		customerLoanSanctionDTO.setRoi(loan.getROI());
+//		customerLoanSanctionDTO.setLoanDesc(loan.getLoanType().getLoanDescription());
+//		customerLoanSanctionDTO.setGender(customer.getGender());
+//		customerLoanSanctionDTO.setLoanRequirement(customer.getLoanRequirement());
+//		return customerLoanSanctionDTO;
+//	}
+//}

@@ -45,6 +45,8 @@ class CustomerServiceTest {
 	private static final String CUSTOMER_IS_ALREADY_CREATED = "Customer is already created";
 	private static final String CUSTOMER_NOT_FOUND = "Customer not found";
     private static final String LOAN_NOT_FOUND= "Loan Details not found";
+	private static final int DEFAULT_ID = 0;
+	private static final char STATUS = 'A';
 	@MockBean
 	CustomerRepository customerRepository;
 
@@ -242,6 +244,14 @@ class CustomerServiceTest {
 		Assertions.assertEquals(CUSTOMER_IS_ALREADY_CREATED, exception.getMessage());
 	}
 
+	/**
+	 * This method test CustomerLoanEligibility of {@link CustomerService} by taking input as
+	 * {customerId and loanId } and return {@link SanctionDTO} object. It mocks findById
+	 * method of repository and {@link Sanction} object. Checks assertEquals
+	 * methods.
+	 *
+	 * @throws ApplicationException with error message.
+	 */
 	@Test
 	@DisplayName("TEST GET Customer after Sanction ")
 	void testCustomerLoanEligibilityValid(){
@@ -257,6 +267,13 @@ class CustomerServiceTest {
 		Assertions.assertEquals(30000.0, sanctionDTO.getLoanAmount());
 	}
 
+	/**
+	 * This method tests get customer by accepting customerId and return empty
+	 * {@link Customer} object. Checks status as { NotFound}
+	 *
+	 * @throws ApplicationException
+	 */
+
 	@Test
 	@DisplayName("TEST GET Customer --NOT FOUND")
 	void testCustomerEligibilityInvalid() throws ApplicationException {
@@ -267,6 +284,13 @@ class CustomerServiceTest {
 		Assertions.assertEquals(CUSTOMER_NOT_FOUND, exception.getMessage());
 
 	}
+
+	/**
+	 * This method tests get Loan by accepting loaId and return empty
+	 * {@link Loan} object. Checks status as { NotFound }
+	 *
+	 * @throws ApplicationException
+	 */
 
 	@Test
 	@DisplayName("TEST GET Loan--NOT FOUND")
