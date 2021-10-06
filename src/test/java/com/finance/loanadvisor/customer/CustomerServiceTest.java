@@ -1,8 +1,6 @@
 package com.finance.loanadvisor.customer;
 
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
-
-
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Loan;
@@ -12,7 +10,6 @@ import com.finance.loanadvisor.entities.repository.CustomerRepository;
 import com.finance.loanadvisor.entities.repository.LoanRepository;
 import com.finance.loanadvisor.entities.repository.SanctionRepository;
 import com.finance.loanadvisor.exception.ApplicationException;
-import com.finance.loanadvisor.exception.DataNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

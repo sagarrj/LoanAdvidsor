@@ -5,11 +5,12 @@ import com.finance.loanadvisor.Sanction.dto.CustomerDetailsDTO;
 import com.finance.loanadvisor.Sanction.dto.SanctionDTO;
 
 
+
 import com.finance.loanadvisor.customer.dto.CustomerDTO;
 import com.finance.loanadvisor.entities.Customer;
 import com.finance.loanadvisor.entities.Sanction;
 import com.finance.loanadvisor.exception.ApplicationException;
-import com.finance.loanadvisor.exception.DataNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class CustomerController {
 	 */
 	@GetMapping("/view/{id}")
 	public ResponseEntity<CustomerDTO> getCustomer(
-			@PathVariable("id") @Min(value = 1, message = "Customer Id must be greater than or equal to 1") @Max(value = 1000, message = "Customer Id must be lower than or equal to 1000") Integer customerId)
+			@PathVariable("id")  @Min(value = 1, message = "Customer Id must be greater than or equal to 1") @Max(value = 1000, message = "Customer Id must be lower than or equal to 1000") Integer customerId)
 			throws ApplicationException {
 		CustomerDTO customerInfo = customerService.getCustomer(customerId);
 		if (customerInfo == null) {

@@ -2,6 +2,7 @@ package com.finance.loanadvisor.exception;
 
 import org.springframework.http.HttpHeaders;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+
 
 
 /**
@@ -36,7 +38,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
         return new ResponseEntity<ErrorDetails>(details, HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler(BadRequest.class)
+   @ExceptionHandler(BadRequest.class)
     public ResponseEntity<ErrorDetails> handleBadRequestException(BadRequest exception, WebRequest request) {
         ErrorDetails details = new ErrorDetails(exception.getMessage(), LocalDate.now(), request.getDescription(false));
         return new ResponseEntity<ErrorDetails>(details, HttpStatus.BAD_REQUEST);
